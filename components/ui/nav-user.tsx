@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,12 +18,23 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logoutUser } from "@/service/user/auth";
+import { redirect, useRouter } from "next/navigation";
 import { useAuth } from "../context/context";
-
 export function NavUser() {
   const { user } = useAuth();
+  const router = useRouter();
 
   const { isMobile } = useSidebar();
+
+  const handleProceedToAccount = () => {
+    router.push("/account");
+  };
+
+  const handleLogout = async () => {
+    await logoutUser();
+    redirect("/sign-in");
+  };
 
   return (
     <SidebarMenu>
@@ -52,7 +56,6 @@ export function NavUser() {
                 <span className="truncate font-semibold">
                   {user?.email ?? ""}
                 </span>
-                <span className="truncate text-xs">{user?.email ?? ""}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -76,34 +79,19 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {user?.email ?? ""}
                   </span>
-                  <span className="truncate text-xs">{user?.email ?? ""}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleProceedToAccount}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

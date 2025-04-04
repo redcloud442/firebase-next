@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
 
     await firebaseAdmin.auth().setCustomUserClaims(user.uid, { admin: true });
 
+    await firebaseAdmin.auth().updateUser(user.uid, {
+      emailVerified: true,
+    });
+
     await firebaseAdmin.firestore().collection("users").doc(user.uid).set({
       email: user.email,
       firstname: firstname,

@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "../ui/table";
 import TableLoading from "./table-loading";
+
 type Props<T> = {
   table: ReactTable<T>;
   columns: ColumnDef<T>[];
@@ -24,6 +25,8 @@ type Props<T> = {
   isFetchingList: boolean;
   setActivePage: Dispatch<SetStateAction<number>>;
   pageCount: number;
+  entriesPerPage?: number;
+  className?: string;
 };
 
 const ReusableTable = <T extends object>({
@@ -34,12 +37,71 @@ const ReusableTable = <T extends object>({
   isFetchingList,
   setActivePage,
   pageCount,
+  entriesPerPage = 10,
+  className = "",
 }: Props<T>) => {
+  const renderPagination = () => {
+    const maxVisiblePages = 3;
+    const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+    let displayedPages: (number | "...")[] = [];
+
+    if (pageCount <= maxVisiblePages) {
+      displayedPages = pages;
+    } else {
+      if (activePage <= 2) {
+        displayedPages = [1, 2, 3, "...", pageCount];
+      } else if (activePage >= pageCount - 1) {
+        displayedPages = [1, "...", pageCount - 2, pageCount - 1, pageCount];
+      } else {
+        displayedPages = [
+          activePage - 1,
+          activePage,
+          activePage + 1,
+          "...",
+          pageCount,
+        ];
+      }
+    }
+
+    return (
+      <div className="flex space-x-2">
+        {displayedPages.map((page, index) =>
+          typeof page === "number" ? (
+            <Button
+              key={page}
+              variant={activePage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => setActivePage(page)}
+              className={`${
+                activePage === page
+                  ? "bg-red-500 text-white"
+                  : "border border-zinc-300 text-zinc-700 dark:border-zinc-500 dark:text-zinc-300"
+              } rounded-lg px-3 py-2 hover:bg-red-600 hover:text-white transition`}
+            >
+              {page}
+            </Button>
+          ) : (
+            <span
+              key={`ellipsis-${index}`}
+              className="px-2 py-1 text-zinc-600 dark:text-zinc-300"
+            >
+              {page}
+            </span>
+          )
+        )}
+      </div>
+    );
+  };
+
+  const startEntry = (activePage - 1) * entriesPerPage + 1;
+  const endEntry = Math.min(activePage * entriesPerPage, totalCount);
+
   return (
     <>
-      <ScrollArea className="relative w-full overflow-x-auto">
+      <ScrollArea className={`relative w-full overflow-x-auto ${className}`}>
         {isFetchingList && <TableLoading />}
-        <Table className="min-w-full relative table-auto border-separate border-spacing-0 dark:bg-blue-600 border-white">
+
+        <Table className="min-w-full table-auto border-separate border-spacing-0 dark:bg-red-300 border-white">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
@@ -49,7 +111,7 @@ const ReusableTable = <T extends object>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="py-2 px-4 text-center text-md font-extrabold text-white border-b border-r bg-blue-500 border-white dark:text-zinc-300 dark:border-zinc-500"
+                    className="py-2 px-4 text-center text-md font-extrabold text-white border-b border-r bg-red-500 border-white dark:text-zinc-300 dark:border-zinc-500"
                   >
                     {header.isPlaceholder
                       ? null
@@ -68,13 +130,13 @@ const ReusableTable = <T extends object>({
               table.getExpandedRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="transition-all duration-300 hover:bg-blue-200"
+                  className="transition-all duration-300 hover:bg-red-200"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="py-3 px-4 text-sm text-zinc-700 border-b border-r border-white dark:text-zinc-300 dark:border-zinc-500 hover:bg-blue-300 hover:text-white"
+                      className="py-3 px-4 text-sm text-zinc-700 border-b border-r border-white dark:text-white dark:border-zinc-500 hover:bg-red-200 hover:text-white"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -98,11 +160,10 @@ const ReusableTable = <T extends object>({
 
           <tfoot>
             <TableRow>
-              <TableCell className="px-0" colSpan={columns.length}>
-                <div className="flex justify-between items-center py-2 px-4 border-t border-white bg-blue-500 dark:border-zinc-500">
+              <TableCell colSpan={columns.length}>
+                <div className="flex justify-between items-center py-2 px-4 border-t border-white bg-red-500 dark:border-zinc-500">
                   <span className="text-sm text-white">
-                    Showing {Math.min(activePage * 10, totalCount)} out of{" "}
-                    {totalCount} entries
+                    Showing {startEntry}–{endEntry} of {totalCount} entries
                   </span>
                 </div>
               </TableCell>
@@ -111,7 +172,7 @@ const ReusableTable = <T extends object>({
         </Table>
 
         <ScrollBar
-          className="bg-gray-700 dark:bg-blue-500 "
+          className="bg-gray-700 dark:bg-red-500"
           orientation="horizontal"
         />
       </ScrollArea>
@@ -122,69 +183,13 @@ const ReusableTable = <T extends object>({
             variant="outline"
             size="sm"
             onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
-            disabled={activePage <= 1}
-            className="bg-blue-500 text-white rounded-lg px-3 py-2 hover:bg-blue-600 transition dark:bg-blue-400 dark:hover:bg-blue-500 dark:text-white"
+            className="bg-red-500 text-white rounded-lg px-3 py-2 hover:bg-red-600 transition dark:bg-red-400 dark:hover:bg-red-500 dark:text-white"
           >
             <ChevronLeft />
           </Button>
         )}
 
-        <div className="flex space-x-2">
-          {(() => {
-            const maxVisiblePages = 3;
-            const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
-            let displayedPages = [];
-
-            if (pageCount <= maxVisiblePages) {
-              displayedPages = pages;
-            } else {
-              if (activePage <= 2) {
-                displayedPages = [1, 2, 3, "...", pageCount];
-              } else if (activePage >= pageCount - 1) {
-                displayedPages = [
-                  1,
-                  "...",
-                  pageCount - 2,
-                  pageCount - 1,
-                  pageCount,
-                ];
-              } else {
-                displayedPages = [
-                  activePage - 1,
-                  activePage,
-                  activePage + 1,
-                  "...",
-                  pageCount,
-                ];
-              }
-            }
-
-            return displayedPages.map((page, index) =>
-              typeof page === "number" ? (
-                <Button
-                  key={page}
-                  variant={activePage === page ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setActivePage(page)}
-                  className={`${
-                    activePage === page
-                      ? "bg-blue-500 text-white"
-                      : "border border-zinc-300 text-zinc-700 dark:border-zinc-500 dark:text-zinc-300"
-                  } rounded-lg px-3 py-2 hover:bg-blue-600 hover:text-white transition`}
-                >
-                  {page}
-                </Button>
-              ) : (
-                <span
-                  key={`ellipsis-${index}`}
-                  className="px-2 py-1 text-zinc-600 dark:text-zinc-300"
-                >
-                  {page}
-                </span>
-              )
-            );
-          })()}
-        </div>
+        {renderPagination()}
 
         {activePage < pageCount && (
           <Button
@@ -193,8 +198,7 @@ const ReusableTable = <T extends object>({
             onClick={() =>
               setActivePage((prev) => Math.min(prev + 1, pageCount))
             }
-            disabled={activePage >= pageCount}
-            className=" text-white rounded-lg px-3 py-2 bg-blue-500 hover:bg-blue-600 transition dark:hover:bg-blue-500 dark:text-white"
+            className="text-white rounded-lg px-3 py-2 bg-red-500 hover:bg-red-600 transition dark:hover:bg-red-500 dark:text-white"
           >
             <ChevronRight />
           </Button>

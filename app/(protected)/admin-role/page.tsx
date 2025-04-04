@@ -1,10 +1,10 @@
-import UserManagementPage from "@/components/UserManagementPage/UserManagementPage";
+import AdminRolePage from "@/components/AdminRolePage/AdminRolePage";
 import { protectedRoute } from "@/utils/protection";
 
 const page = async () => {
   await protectedRoute();
 
-  return <UserManagementPage />;
+  return <AdminRolePage />;
 };
 
 export default page;
