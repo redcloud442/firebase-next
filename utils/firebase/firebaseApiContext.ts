@@ -20,5 +20,5 @@ export const getAuthUser = async () => {
     throw new Error("Unauthorized");
   }
 
-  return tokenResult.decodedToken; // { uid, email, customClaims, ... }
+  return tokenResult.decodedToken; 
 };

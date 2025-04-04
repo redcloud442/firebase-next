@@ -29,6 +29,7 @@ export const config = {
   matcher: [
     "/api/login",
     "/api/logout",
+    "/api/user/:path*",
     "/",
     "/((?!_next|favicon.ico|api|.*\\.).*)",
   ],
