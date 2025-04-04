@@ -1,9 +1,9 @@
-import FrontPage from "@/components/FrontPage/FrontPage";
 import { protectedRoute } from "@/utils/protection";
 
 const page = async () => {
   await protectedRoute();
-  return <FrontPage />;
+
+  return <div>page</div>;
 };
 
 export default page;

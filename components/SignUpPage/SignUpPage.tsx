@@ -1,9 +1,8 @@
 "use client";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { auth } from "../../utils/firebase/firebase";
 
+import { registerUser } from "@/service/user/auth";
 import { SignUpFormData, signUpSchema } from "@/utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,7 +21,12 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      await createUserWithEmailAndPassword(auth, data.email, data.password);
+      await registerUser(
+        data.email,
+        data.password,
+        data.firstname,
+        data.lastname
+      );
       toast.success("Success. The user is created in Firebase");
       router.push("/");
     } catch (error) {
@@ -43,6 +47,43 @@ const SignUp = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
         {/* Email */}
+
+        <div className="mb-4">
+          <label htmlFor="firstname" className="block text-sm font-medium mb-1">
+            Firstname
+          </label>
+          <input
+            id="firstname"
+            type="text"
+            {...register("firstname")}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your firstname"
+          />
+          {errors.firstname && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.firstname.message}
+            </p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="lastname" className="block text-sm font-medium mb-1">
+            Lastname
+          </label>
+          <input
+            id="lastname"
+            type="text"
+            {...register("lastname")}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your lastname"
+          />
+          {errors.lastname && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.lastname.message}
+            </p>
+          )}
+        </div>
+
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium mb-1">
             Email

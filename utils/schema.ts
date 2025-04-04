@@ -15,6 +15,8 @@ export const signUpSchema = z
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
+    firstname: z.string().min(1, { message: "Firstname is required" }),
+    lastname: z.string().min(1, { message: "Lastname is required" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

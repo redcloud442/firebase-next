@@ -1,6 +1,6 @@
 "use client";
 
-import { loginAction } from "@/app/action/auth";
+import { loginUser } from "@/service/user/auth";
 import { SignInFormData, signInSchema } from "@/utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      await loginAction(data.email, data.password);
+      await loginUser(data.email, data.password);
 
       toast.success("Logged in successfully");
       router.push("/");

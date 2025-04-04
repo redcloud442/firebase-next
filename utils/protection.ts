@@ -1,37 +1,47 @@
+import { User } from "@/components/context/context";
+import { getUser } from "@/service/user/user";
+import { Tokens } from "next-firebase-auth-edge/auth";
+import { filterStandardClaims } from "next-firebase-auth-edge/auth/claims";
 import { redirect } from "next/navigation";
 import { auth } from "./firebase/firebase";
-import firebaseAdmin from "./firebase/firebaseAdmin";
 
-export const protectRoute = async () => {
-  const user = auth.currentUser;
+const toUser = ({ decodedToken }: Tokens): User => {
+  const {
+    uid,
+    email,
+    picture: photoURL,
+    email_verified: emailVerified,
+    phone_number: phoneNumber,
+    name: displayName,
+    source_sign_in_provider: signInProvider,
+  } = decodedToken;
+
+  const customClaims = filterStandardClaims(decodedToken);
+
+  return {
+    uid,
+    email: email ?? null,
+    displayName: displayName ?? null,
+    photoURL: photoURL ?? null,
+    phoneNumber: phoneNumber ?? null,
+    emailVerified: emailVerified ?? false,
+    providerId: signInProvider,
+    customClaims: (customClaims as { admin: boolean }) ?? null,
+  };
+};
+
+export const protectedRoute = async () => {
+  const tokens = await getUser();
+
+  const user = tokens ? toUser(tokens) : null;
 
   if (!user) {
     redirect("/sign-in");
   }
 
-  const userData = await firebaseAdmin.auth().getUser(user.uid);
-
-  if (!userData) {
-    redirect("/sign-in");
+  if (!user.customClaims?.admin) {
+    redirect("/");
   }
-
-  const userDataCollection = await firebaseAdmin
-    .firestore()
-    .collection("users")
-    .doc(user.uid)
-    .get();
-
-  if (!userDataCollection.exists) {
-    redirect("/sign-in");
-  }
-
-  const userRole = userDataCollection.data()?.role;
-
-  if (userRole !== "ADMIN") {
-    redirect("/sign-in");
-  }
-
-  return userData;
 };
 
 export const UnprotectedRoute = async () => {
