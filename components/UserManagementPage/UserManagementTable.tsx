@@ -1,7 +1,7 @@
 "use client";
 
-import { getUsers } from "@/service/user/auth";
-import { User } from "@/utils/types";
+import { getUsers, resetProgress } from "@/service/user/auth";
+import { userReturnData } from "@/utils/types";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -19,7 +19,7 @@ import ReusableTable from "../ui/reusable-table";
 import { userColumns } from "./UserManagementColumn";
 
 const UserManagementTable = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<userReturnData[]>([]);
   const [count, setCount] = useState<number>(0);
   const [activePage, setActivePage] = useState<number>(1);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -37,7 +37,7 @@ const UserManagementTable = () => {
           limit: 10,
           search: "",
         });
-        setUsers(data);
+        setUsers(data as userReturnData[]);
         setCount(count);
       } catch (error) {
         if (error instanceof Error) {
@@ -55,11 +55,42 @@ const UserManagementTable = () => {
     router.push(`/user-management/${uid}`);
   };
 
-  const columns = userColumns(users, handleProceedToUser);
+  const handleResetProgress = async (uid: string) => {
+    try {
+      await resetProgress(uid);
+      const userToReset = users.find((user) => user.id === uid);
+
+      if (userToReset) {
+        const resetData = {
+          rtime: userToReset.rtime,
+          email: userToReset.email,
+          name: userToReset.name,
+          id: uid,
+        };
+
+        setUsers((prevUsers) =>
+          prevUsers.map((user) => ({
+            ...user,
+            ...(user.id === uid && {
+              User_Information: resetData,
+            }),
+          }))
+        );
+
+        toast.success("Progress reset successfully");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  };
+
+  const columns = userColumns(users, handleProceedToUser, handleResetProgress);
 
   const table = useReactTable({
     data: users,
-    columns: columns as ColumnDef<User>[],
+    columns: columns as ColumnDef<userReturnData>[],
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

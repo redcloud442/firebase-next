@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 import { auth, realtime } from "@/utils/firebase/firebase";
-import { AdminUser, User } from "@/utils/types";
+import { AdminUser, UserData } from "@/utils/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { child, get, ref } from "firebase/database";
 
@@ -77,7 +77,6 @@ export const getUsers = async (params: {
   search: string;
 }) => {
   const { page, limit, search } = params;
-
   const dbRef = ref(realtime);
 
   try {
@@ -88,15 +87,26 @@ export const getUsers = async (params: {
 
     const data = snapshot.val();
 
-    const users = Object.entries(data).map(([key, value]) => {
-      const user = value as User;
+    const users = Object.entries(data).map(([uid, value]) => {
+      const user = value as UserData;
+
       return {
-        ...user,
-        id: key,
+        id: uid,
+        name: user?.User_Information?.name || "",
+        email: user?.User_Information?.email || "",
+        rtime: user?.User_Information?.rtime || "",
+        ...(user?.Quiz_Info && {
+          correctAnswers: user?.Quiz_Info?.correct_answers ?? 0,
+          duration: user?.Quiz_Info?.duration ?? "00:00:00",
+        }),
+        ...(user?.Game_Info && {
+          gameCarInfo: Object.keys(user?.Game_Info?.Cars ?? {}).length ?? 0,
+          gameMotorcycleInfo:
+            Object.keys(user?.Game_Info?.Motorcycle ?? {}).length ?? 0,
+        }),
       };
     });
 
-    // Search filtering (name or email)
     const filtered = search
       ? users.filter(
           (user) =>
@@ -107,7 +117,6 @@ export const getUsers = async (params: {
 
     const count = filtered.length;
 
-    // Pagination (manual slice)
     const start = (page - 1) * limit;
     const paginated = filtered.slice(start, start + limit);
 
@@ -147,7 +156,13 @@ export const getAdminUsers = async (params: {
 
 export const updateUser = async (params: {
   userUid: string;
-  type: "disable" | "enable" | "promote" | "demote" | "update-avatar";
+  type:
+    | "disable"
+    | "enable"
+    | "promote"
+    | "demote"
+    | "update-avatar"
+    | "verify";
   photoURL?: string;
 }) => {
   const { userUid, type, photoURL } = params;
@@ -205,6 +220,23 @@ export const refreshUser = async () => {
 
   if (!response.ok) {
     throw new Error("Failed to refresh user");
+  }
+
+  return data;
+};
+
+export const resetProgress = async (uid: string) => {
+  const response = await fetch(`/api/user/${uid}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to reset progress");
   }
 
   return data;

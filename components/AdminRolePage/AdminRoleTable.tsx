@@ -60,7 +60,7 @@ const UserManagementTable = () => {
 
   const handleUpdateUser = async (
     userUid: string,
-    type: "disable" | "enable" | "promote" | "demote"
+    type: "disable" | "enable" | "promote" | "demote" | "verify"
   ) => {
     try {
       setIsLoading(true);
@@ -92,6 +92,13 @@ const UserManagementTable = () => {
           setUsers(
             users.map((user) =>
               user.uid === userUid ? { ...user, admin: false } : user
+            ) as AdminUser[]
+          );
+          break;
+        case "verify":
+          setUsers(
+            users.map((user) =>
+              user.uid === userUid ? { ...user, isVerified: true } : user
             ) as AdminUser[]
           );
           break;

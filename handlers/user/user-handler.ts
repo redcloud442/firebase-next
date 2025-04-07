@@ -1,4 +1,5 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
+import { UserData } from "@/utils/types";
 import { Timestamp } from "firebase/firestore";
 
 export const getAdminUsers = async (params: {
@@ -32,7 +33,13 @@ export const getAdminUsers = async (params: {
 
 export const updateUser = async (params: {
   userUid: string;
-  type: "disable" | "enable" | "promote" | "demote" | "update-avatar";
+  type:
+    | "disable"
+    | "enable"
+    | "promote"
+    | "demote"
+    | "update-avatar"
+    | "verify";
   photoURL?: string;
   actorEmail: string;
   actorUid: string;
@@ -59,6 +66,10 @@ export const updateUser = async (params: {
 
   if (type === "update-avatar") {
     await firebaseAdmin.auth().updateUser(userUid, { photoURL: photoURL });
+  }
+
+  if (type === "verify") {
+    await firebaseAdmin.auth().updateUser(userUid, { emailVerified: true });
   }
 
   await firebaseAdmin
@@ -151,4 +162,42 @@ export const updateUserChangePassword = async (params: {
       actionReceivedBy: "",
       actionBy: email,
     });
+};
+
+export const resetProgress = async (
+  uid: string,
+  email: string,
+  actorUid: string
+) => {
+  const userRef = firebaseAdmin.database().ref(`users/${uid}`);
+
+  const snapshot = await userRef.once("value");
+  const userData = snapshot.val();
+
+  if (!userData) return;
+
+  await firebaseAdmin
+    .firestore()
+    .collection("user-history")
+    .doc(actorUid)
+    .collection("actions")
+    .add({
+      type: "reset-progress",
+      date: new Date(),
+      actionReceivedBy: userData?.User_Information?.email ?? "",
+      actionBy: email,
+    });
+
+  await userRef.update({
+    Quiz_Info: null,
+    Game_Info: null,
+  });
+};
+
+export const getUser = async (uid: string) => {
+  const userRef = firebaseAdmin.database().ref(`users/${uid}`);
+
+  const snapshot = await userRef.once("value");
+
+  return { data: snapshot.val() as UserData };
 };

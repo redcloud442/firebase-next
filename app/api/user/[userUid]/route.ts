@@ -1,4 +1,5 @@
 import {
+  resetProgress,
   updateUser,
   updateUserChangePassword,
 } from "@/handlers/user/user-handler";
@@ -61,4 +62,21 @@ export const PUT = async (
   });
 
   return NextResponse.json({ message: "User updated" });
+};
+
+export const DELETE = async (
+  req: Request,
+  { params }: { params: Promise<{ userUid: string }> }
+) => {
+  const { admin, email, uid } = await getAuthUser();
+
+  if (!admin) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { userUid } = await params;
+
+  await resetProgress(userUid, email!, uid!);
+
+  return NextResponse.json({ message: "Progress reset" });
 };

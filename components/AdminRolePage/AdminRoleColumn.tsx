@@ -3,6 +3,7 @@ import { formatCustom } from "@/utils/function";
 import { AdminUser } from "@/utils/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { Badge } from "../ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,7 @@ import {
 type Props = {
   handleUpdateUser: (
     userUid: string,
-    type: "disable" | "enable" | "promote" | "demote"
+    type: "disable" | "enable" | "promote" | "demote" | "verify"
   ) => void;
   handleProceedToUser: (userUid: string) => void;
 };
@@ -32,13 +33,7 @@ export const adminRoleColumns = ({
         const email = row.original.email;
         return (
           <div className="text-center">
-            <Button
-              variant="link"
-              className="text-blue-500 underline cursor-pointer"
-              onClick={() => handleProceedToUser(row.original.uid)}
-            >
-              {email}
-            </Button>
+            <Button variant="link">{email}</Button>
           </div>
         );
       },
@@ -58,10 +53,12 @@ export const adminRoleColumns = ({
       cell: ({ row }) => {
         const isVerified = row.getValue("isVerified");
         return (
-          <div
-            className={`text-center ${isVerified ? "text-green-600" : "text-red-500"}`}
-          >
-            {isVerified ? "Verified" : "Unverified"}
+          <div className="flex items-center justify-center">
+            <Badge
+              className={`text-center text-white ${isVerified ? "bg-green-500" : "bg-red-500"}`}
+            >
+              {isVerified ? "Verified" : "Unverified"}
+            </Badge>
           </div>
         );
       },
@@ -72,10 +69,12 @@ export const adminRoleColumns = ({
       cell: ({ row }) => {
         const isDisabled = row.getValue("disabled");
         return (
-          <div
-            className={`text-center ${isDisabled ? "text-red-500" : " text-green-600"}`}
-          >
-            {isDisabled ? "Disabled" : "Active"}
+          <div className="flex items-center justify-center">
+            <Badge
+              className={`text-center text-white ${isDisabled ? "bg-red-500" : "bg-green-500"}`}
+            >
+              {isDisabled ? "Disabled" : "Active"}
+            </Badge>
           </div>
         );
       },
@@ -97,6 +96,7 @@ export const adminRoleColumns = ({
         const uuid = row.original.uid;
         const isDisabled = row.original.disabled;
         const isAdmin = row.original.admin;
+        const isVerified = row.original.isVerified;
 
         return (
           <DropdownMenu>
@@ -143,6 +143,13 @@ export const adminRoleColumns = ({
                   onClick={() => handleUpdateUser(uuid, "promote")}
                 >
                   Promote to Admin
+                </DropdownMenuItem>
+              )}
+              {!isVerified && (
+                <DropdownMenuItem
+                  onClick={() => handleUpdateUser(uuid, "verify")}
+                >
+                  Verify Account
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

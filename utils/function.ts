@@ -10,3 +10,11 @@ export const formatCustom = (dateString: string) => {
     date.getDate()
   )} ${pad(hour12)}:${pad(date.getMinutes())}:${pad(date.getSeconds())} ${ampm}`;
 };
+
+export const formatTime = (timeStr: string) => {
+  return new Date(timeStr).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
