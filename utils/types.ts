@@ -72,3 +72,14 @@ export type userReturnData = {
   gameCarInfo: number;
   gameMotorcycleInfo: number;
 };
+
+export type DashboardData = {
+  totalUsers: number;
+  activePlayers: number;
+  totalQuizAttempts: number;
+  successRate: number;
+  averageQuizScore: number;
+  mostCompletedStage: string;
+  leastCompletedStage: string;
+  averageTimeSpent: number;
+};

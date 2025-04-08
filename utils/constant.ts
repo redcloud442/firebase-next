@@ -1,5 +1,6 @@
 export const KEY_MAPPING = {
-  gameInfo: "Number of Games Played",
-  duration: "Duration",
+  gameCarInfo: "Number of Car Games Played",
+  gameMotorcycleInfo: "Number of Motorcycle Games Played",
+  duration: "Quiz Duration",
   correctAnswers: "Correct Answers",
 } as const;

@@ -3,7 +3,7 @@ import { protectedRoute } from "@/utils/protection";
 
 const page = async () => {
   await protectedRoute();
-  
+
   return <FrontPage />;
 };
 

@@ -57,6 +57,7 @@ const UserManagementTable = () => {
 
   const handleResetProgress = async (uid: string) => {
     try {
+      setIsLoading(true);
       await resetProgress(uid);
       const userToReset = users.find((user) => user.id === uid);
 
@@ -83,6 +84,8 @@ const UserManagementTable = () => {
       if (error instanceof Error) {
         toast.error(error.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
