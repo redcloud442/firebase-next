@@ -31,6 +31,136 @@ export const getAdminUsers = async (params: {
   };
 };
 
+export const getUsers = async (params: {
+  limit: number;
+  search?: string;
+  startAfterKey?: string;
+}) => {
+  const { limit, search, startAfterKey } = params;
+
+  const userRef = firebaseAdmin.database().ref("users");
+  let query = userRef.orderByKey();
+
+  if (startAfterKey) {
+    query = query.startAfter(startAfterKey);
+  }
+
+  query = query.limitToFirst(limit);
+
+  const snapshot = await query.once("value");
+
+  const users: {
+    id: string;
+    name: string;
+    email: string;
+    rtime: string;
+    correctAnswers?: number;
+    duration?: string;
+    gameCarInfo?: number;
+    gameMotorcycleInfo?: number;
+  }[] = [];
+
+  let filteredCount = 0;
+
+  snapshot.forEach((child) => {
+    const uid = child.key!;
+    const user = child.val() as UserData;
+
+    const name = user.User_Information?.name || "";
+    const email = user.User_Information?.email || "";
+    const rtime = user.User_Information?.rtime || "";
+
+    const matchesSearch =
+      !search ||
+      name.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase());
+
+    if (matchesSearch) {
+      filteredCount++;
+
+      users.push({
+        id: uid,
+        name,
+        email,
+        rtime,
+        ...(user.Quiz_Info && {
+          correctAnswers: user.Quiz_Info.correct_answers ?? 0,
+          duration: user.Quiz_Info.duration ?? "00:00:00",
+        }),
+        ...(user.Game_Info && {
+          gameCarInfo: Object.keys(user.Game_Info.Cars ?? {}).length ?? 0,
+          gameMotorcycleInfo:
+            Object.keys(user.Game_Info.Motorcycle ?? {}).length ?? 0,
+        }),
+      });
+    }
+  });
+
+  return {
+    data: users,
+    count: filteredCount,
+  };
+};
+
+export const getUsersExport = async (params: {
+  limit: number;
+  startAfterKey?: string;
+}) => {
+  const { limit, startAfterKey } = params;
+
+  const userRef = firebaseAdmin.database().ref("users");
+  let query = userRef.orderByKey();
+
+  if (startAfterKey) {
+    query = query.startAfter(startAfterKey);
+  }
+
+  query = query.limitToFirst(limit);
+
+  const snapshot = await query.once("value");
+
+  const users: {
+    id: string;
+    "User Name": string;
+    Email: string;
+    "Time Spent": string;
+    "Correct Answers"?: number;
+    Duration?: string;
+    "Game Car Played"?: number;
+    "Game Motorcycle Played"?: number;
+  }[] = [];
+
+  snapshot.forEach((child) => {
+    const uid = child.key!;
+    const user = child.val() as UserData;
+
+    const name = user.User_Information?.name || "";
+    const email = user.User_Information?.email || "";
+    const rtime = user.User_Information?.rtime || "";
+
+    users.push({
+      id: uid,
+      "User Name": name,
+      Email: email,
+      "Time Spent": rtime,
+      ...(user.Quiz_Info && {
+        "Correct Answers": user.Quiz_Info.correct_answers ?? 0,
+        Duration: user.Quiz_Info.duration ?? "00:00:00",
+      }),
+      ...(user.Game_Info && {
+        "Game Car Played": Object.keys(user.Game_Info.Cars ?? {}).length ?? 0,
+        "Game Motorcycle Played":
+          Object.keys(user.Game_Info.Motorcycle ?? {}).length ?? 0,
+      }),
+    });
+  });
+
+  return {
+    data: users,
+    count: snapshot.numChildren(),
+  };
+};
+
 export const updateUser = async (params: {
   userUid: string;
   type:

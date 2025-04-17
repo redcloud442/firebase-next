@@ -1,10 +1,10 @@
-import AccountPage from "@/components/AccountPage/AccountPage";
+import LeaderboardPage from "@/components/LeaderboardPage/LeaderboardPage";
 import { protectedRoute } from "@/utils/protection";
 
 const page = async () => {
   await protectedRoute();
 
-  return <AccountPage />;
+  return <LeaderboardPage />;
 };
 
 export default page;

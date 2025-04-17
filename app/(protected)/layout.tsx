@@ -82,7 +82,7 @@ export default function AppLayout({
               </Breadcrumb>
             </div>
           </header>
-          <main className="p-6">{children}</main>
+          <div className="p-6">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

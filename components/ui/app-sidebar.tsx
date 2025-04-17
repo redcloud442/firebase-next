@@ -1,6 +1,6 @@
 "use client";
 
-import { GalleryVerticalEnd, SquareTerminal } from "lucide-react";
+import { GalleryVerticalEnd, SquareTerminal, User2 } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "@/components/ui/nav-main";
@@ -36,7 +36,7 @@ const data = {
         },
         {
           title: "Leaderboard",
-          url: "#",
+          url: "/leaderboard",
         },
       ],
     },
@@ -44,7 +44,7 @@ const data = {
     {
       title: "User Management",
       url: "#",
-      icon: SquareTerminal,
+      icon: User2,
       isActive: true,
       items: [
         {

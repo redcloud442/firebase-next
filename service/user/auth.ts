@@ -1,11 +1,15 @@
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
-import { auth, realtime } from "@/utils/firebase/firebase";
-import { AdminUser, UserData } from "@/utils/types";
+import { auth } from "@/utils/firebase/firebase";
+import { AdminUser } from "@/utils/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { child, get, ref } from "firebase/database";
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (params: {
+  email: string;
+  password: string;
+}) => {
+  const { email, password } = params;
+
   try {
     const user = await signInWithEmailAndPassword(auth, email, password);
 
@@ -42,12 +46,14 @@ export const logoutUser = async () => {
   });
 };
 
-export const registerUser = async (
-  email: string,
-  password: string,
-  firstname: string,
-  lastname: string
-) => {
+export const registerUser = async (params: {
+  email: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+}) => {
+  const { email, password, firstname, lastname } = params;
+
   try {
     const user = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -68,62 +74,6 @@ export const registerUser = async (
     if (error instanceof Error) {
       throw new Error("Login failed");
     }
-  }
-};
-
-export const getUsers = async (params: {
-  page: number;
-  limit: number;
-  search: string;
-}) => {
-  const { page, limit, search } = params;
-  const dbRef = ref(realtime);
-
-  try {
-    const snapshot = await get(child(dbRef, "users"));
-    if (!snapshot.exists()) {
-      return { data: [], count: 0 };
-    }
-
-    const data = snapshot.val();
-
-    const users = Object.entries(data).map(([uid, value]) => {
-      const user = value as UserData;
-
-      return {
-        id: uid,
-        name: user?.User_Information?.name || "",
-        email: user?.User_Information?.email || "",
-        rtime: user?.User_Information?.rtime || "",
-        ...(user?.Quiz_Info && {
-          correctAnswers: user?.Quiz_Info?.correct_answers ?? 0,
-          duration: user?.Quiz_Info?.duration ?? "00:00:00",
-        }),
-        ...(user?.Game_Info && {
-          gameCarInfo: Object.keys(user?.Game_Info?.Cars ?? {}).length ?? 0,
-          gameMotorcycleInfo:
-            Object.keys(user?.Game_Info?.Motorcycle ?? {}).length ?? 0,
-        }),
-      };
-    });
-
-    const filtered = search
-      ? users.filter(
-          (user) =>
-            user.name.toLowerCase().includes(search.toLowerCase()) ||
-            user.email.toLowerCase().includes(search.toLowerCase())
-        )
-      : users;
-
-    const count = filtered.length;
-
-    const start = (page - 1) * limit;
-    const paginated = filtered.slice(start, start + limit);
-
-    return { data: paginated, count };
-  } catch (error) {
-    console.error("Error getting users:", error);
-    return { data: [], count: 0 };
   }
 };
 
@@ -225,7 +175,9 @@ export const refreshUser = async () => {
   return data;
 };
 
-export const resetProgress = async (uid: string) => {
+export const resetProgress = async (params: { uid: string }) => {
+  const { uid } = params;
+
   const response = await fetch(`/api/user/${uid}`, {
     headers: {
       "Content-Type": "application/json",
@@ -237,6 +189,60 @@ export const resetProgress = async (uid: string) => {
 
   if (!response.ok) {
     throw new Error("Failed to reset progress");
+  }
+
+  return data;
+};
+
+export const getUserRoleManagement = async (params: {
+  limit: number;
+  search: string;
+  page: number;
+}) => {
+  const { limit, search, page } = params;
+
+  const response = await fetch("/api/user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      limit,
+      search,
+      page,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to get user role management");
+  }
+
+  return data;
+};
+
+export const getUserRoleManagementExport = async (params: {
+  limit: number;
+  page: number;
+}) => {
+  const { limit, page } = params;
+
+  const response = await fetch("/api/user/export", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      limit,
+      page,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to get user role management");
   }
 
   return data;

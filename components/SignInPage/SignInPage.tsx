@@ -20,7 +20,10 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      await loginUser(data.email, data.password);
+      await loginUser({
+        email: data.email,
+        password: data.password,
+      });
 
       toast.success("Logged in successfully");
       router.push("/");

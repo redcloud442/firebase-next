@@ -12,10 +12,10 @@ export const getDashboardData = async () => {
   let activePlayers = 0;
   let totalQuizAttempts = 0;
   let totalCorrectAnswers = 0;
-  let totalWrongAnswers = 0;
   let totalQuizScore = 0;
   let quizAttemptCount = 0;
   let totalTimeSpent = 0;
+  let quizTotal = 0;
 
   const gameStageCompletion: Record<string, number> = {};
 
@@ -28,9 +28,9 @@ export const getDashboardData = async () => {
 
       totalQuizAttempts++;
       totalCorrectAnswers += quiz.correct_answers;
-      totalWrongAnswers += quiz.wrong_answers;
       totalQuizScore += quiz.score;
       quizAttemptCount++;
+      quizTotal += 20;
 
       totalTimeSpent += durationSec;
     }
@@ -69,10 +69,7 @@ export const getDashboardData = async () => {
     activePlayers,
     totalQuizAttempts,
     successRate:
-      totalQuizAttempts > 0
-        ? (totalCorrectAnswers / (totalCorrectAnswers + totalWrongAnswers)) *
-          100
-        : 0,
+      totalQuizAttempts > 0 ? (totalCorrectAnswers / quizTotal) * 100 : 0,
     averageQuizScore:
       quizAttemptCount > 0 ? totalQuizScore / quizAttemptCount : 0,
     mostCompletedStage,

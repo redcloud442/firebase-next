@@ -1,4 +1,4 @@
-import { getAdminUsers } from "@/handlers/user/user-handler";
+import { getAdminUsers, getUsers } from "@/handlers/user/user-handler";
 import { getAuthUser } from "@/utils/firebase/firebaseApiContext";
 import { NextResponse } from "next/server";
 
@@ -21,4 +21,22 @@ export const GET = async (req: Request) => {
   });
 
   return NextResponse.json(users);
+};
+
+export const POST = async (req: Request) => {
+  const { admin } = await getAuthUser();
+
+  if (!admin) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { limit, search, page } = await req.json();
+
+  const user = await getUsers({
+    limit,
+    search,
+    startAfterKey: String(page),
+  });
+
+  return NextResponse.json(user);
 };

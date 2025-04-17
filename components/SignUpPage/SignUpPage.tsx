@@ -21,12 +21,13 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      await registerUser(
-        data.email,
-        data.password,
-        data.firstname,
-        data.lastname
-      );
+      await registerUser({
+        email: data.email,
+        password: data.password,
+        firstname: data.firstname,
+        lastname: data.lastname,
+      });
+
       toast.success("Success. The user is created in Firebase");
       router.push("/");
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { getDashboardDataService } from "@/service/dashboard/dashboard";
 import type { DashboardData } from "@/utils/types";
 import { useEffect, useState } from "react";
@@ -14,12 +13,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { DashboardCard } from "../ui/dashboard-card";
+import { Skeleton } from "../ui/skeleton";
 
 const FrontPage = () => {
   const [data, setData] = useState<DashboardData>();
 
   const fetchData = async () => {
     const dashboard = await getDashboardDataService();
+
     setData(dashboard);
   };
 
@@ -29,10 +31,22 @@ const FrontPage = () => {
 
   if (!data) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
-        <p className="text-center text-muted-foreground animate-pulse">
-          Loading dashboard...
-        </p>
+      <div className="space-y-4 w-full">
+        <Skeleton className="w-full h-[100px] rounded-lg" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+          <Skeleton className="w-full h-[200px] rounded-lg" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton className="w-full h-[600px] rounded-lg" />
+          <Skeleton className="w-full h-[600px] rounded-lg" />
+        </div>
       </div>
     );
   }
@@ -79,12 +93,17 @@ const FrontPage = () => {
         <h2 className="text-xl font-semibold mb-4">Game Stage Completion</h2>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={stageChartData}>
+            <BarChart className="text-black" data={stageChartData}>
               <XAxis dataKey="stage" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" fill="#4F46E5" radius={[8, 8, 0, 0]}>
+              <Bar
+                className="text-black"
+                dataKey="value"
+                fill="#4F46E5"
+                radius={[8, 8, 0, 0]}
+              >
                 <LabelList dataKey="name" position="top" />
               </Bar>
             </BarChart>
@@ -94,21 +113,5 @@ const FrontPage = () => {
     </div>
   );
 };
-
-// 👇 Clean reusable card component
-const DashboardCard = ({
-  title,
-  value,
-}: {
-  title: string;
-  value: number | string;
-}) => (
-  <Card className="transition-all hover:shadow-md hover:scale-[1.02] duration-200">
-    <CardContent className="p-5 space-y-1">
-      <p className="text-sm text-muted-foreground">{title}</p>
-      <p className="text-2xl font-semibold">{value}</p>
-    </CardContent>
-  </Card>
-);
 
 export default FrontPage;
