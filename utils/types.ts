@@ -62,15 +62,15 @@ export type userReturnData = {
   name: string;
   email: string;
   rtime: string;
-  correctAnswers: number;
-  wrongAnswers: number;
-  totalQuestions: number;
-  duration: string;
-  score: number;
-  startTime: string;
-  endTime: string;
-  gameCarInfo: number;
-  gameMotorcycleInfo: number;
+  correctAnswers?: number;
+  wrongAnswers?: number;
+  totalQuestions?: number;
+  duration?: string;
+  score?: number;
+  startTime?: string;
+  endTime?: string;
+  gameCarInfo?: number;
+  gameMotorcycleInfo?: number;
 };
 
 export type DashboardData = {

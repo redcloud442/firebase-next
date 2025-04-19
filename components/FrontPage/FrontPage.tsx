@@ -72,20 +72,28 @@ const FrontPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardCard title="Total Users" value={data.totalUsers} />
-        <DashboardCard title="Active Players" value={data.activePlayers} />
-        <DashboardCard title="Quiz Attempts" value={data.totalQuizAttempts} />
+        <DashboardCard title="Total Users" value={data?.totalUsers ?? 0} />
+        <DashboardCard
+          title="Active Players"
+          value={data?.activePlayers ?? 0}
+        />
+        <DashboardCard
+          title="Quiz Attempts"
+          value={data?.totalQuizAttempts ?? 0}
+        />
         <DashboardCard
           title="Success Rate"
-          value={`${data.successRate.toFixed(2)}%`}
+          value={`${data?.successRate ? data.successRate.toFixed(2) : "0.00"}%`}
         />
         <DashboardCard
           title="Avg. Quiz Score"
-          value={data.averageQuizScore.toFixed(2)}
+          value={
+            data?.averageQuizScore ? data.averageQuizScore.toFixed(2) : "0.00"
+          }
         />
         <DashboardCard
           title="Avg. Time Spent"
-          value={`${(data.averageTimeSpent / 60).toFixed(2)} mins`}
+          value={`${data?.averageTimeSpent ? (data.averageTimeSpent / 60).toFixed(2) : "0.00"} mins`}
         />
       </div>
 

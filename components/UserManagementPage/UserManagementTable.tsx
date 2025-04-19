@@ -87,12 +87,7 @@ const UserManagementTable = () => {
         };
 
         setUsers((prevUsers) =>
-          prevUsers.map((user) => ({
-            ...user,
-            ...(user.id === uid && {
-              User_Information: resetData,
-            }),
-          }))
+          prevUsers.map((user) => (user.id === uid ? { ...resetData } : user))
         );
 
         toast.success("Progress reset successfully");

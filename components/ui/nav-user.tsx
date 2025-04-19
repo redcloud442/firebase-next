@@ -19,7 +19,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logoutUser } from "@/service/user/auth";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../context/context";
 export function NavUser() {
   const { user } = useAuth();
@@ -33,7 +33,7 @@ export function NavUser() {
 
   const handleLogout = async () => {
     await logoutUser();
-    redirect("/sign-in");
+    router.push("/sign-in");
   };
 
   return (

@@ -10,8 +10,9 @@ import { KEY_MAPPING } from "@/utils/constant";
 import { userReturnData } from "@/utils/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { DropdownMenuItem } from "../ui/dropdown-menu";
 
+import Link from "next/link";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 export const userColumns = (
   users: userReturnData[],
   handleProceedToUser: (uid: string) => void,
@@ -70,8 +71,14 @@ export const userColumns = (
       accessorKey: key,
       header: () => renderHeader(key),
       cell: ({ row }) => {
-        const value = row.getValue(key) as string;
-        return <div className="text-center">{value ?? "—"}</div>;
+        const value = row.getValue(key);
+        return (
+          <div className="text-center">
+            {typeof value === "object" && value !== null
+              ? JSON.stringify(value)
+              : String(value ?? "—")}
+          </div>
+        );
       },
     })
   );
@@ -93,12 +100,10 @@ export const userColumns = (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(row.original.email)
-                }
-              >
-                View Player Details
+              <DropdownMenuItem>
+                <Link href={`/user-management/${uuid}`}>
+                  View Player Details
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleResetProgress(uuid)}>

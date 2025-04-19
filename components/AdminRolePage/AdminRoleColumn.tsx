@@ -23,7 +23,6 @@ type Props = {
 
 export const adminRoleColumns = ({
   handleUpdateUser,
-  handleProceedToUser,
 }: Props): ColumnDef<AdminUser>[] => {
   return [
     {
@@ -116,9 +115,7 @@ export const adminRoleColumns = ({
                 Copy user Email
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleProceedToUser(uuid)}>
-                View Player Details
-              </DropdownMenuItem>
+
               {isDisabled ? (
                 <DropdownMenuItem
                   onClick={() => handleUpdateUser(uuid, "enable")}
