@@ -42,7 +42,7 @@ export default function AppLayout({
   }, [pathSegments]);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light">
+    <ThemeProvider attribute="class" defaultTheme="dark">
       <SidebarProvider>
         <AppSidebar className="border-none" />
         <SidebarInset>
