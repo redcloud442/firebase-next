@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wheels App",
-  description: "Wheels App",
+  title: "RoadWheel App",
+  description: "RoadWheel App",
 };
 
 export default async function RootLayout({
