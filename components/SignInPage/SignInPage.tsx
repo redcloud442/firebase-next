@@ -3,10 +3,11 @@
 import { loginUser } from "@/service/user/auth";
 import { SignInFormData, signInSchema } from "@/utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+import { Button } from "../ui/button";
 const SignIn = () => {
   const router = useRouter();
 
@@ -80,13 +81,21 @@ const SignIn = () => {
           )}
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
           className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
         >
           {isSubmitting ? "Signing In..." : "Sign In"}
-        </button>
+        </Button>
+
+        <div className="flex items-center justify-center mt-4 gap-2 w-full">
+          <span>Don&apos;t have an account? </span>{" "}
+          <Link href="/sign-up" className="text-blue-500 hover:underline">
+            {" "}
+            Sign up
+          </Link>
+        </div>
       </form>
     </div>
   );
