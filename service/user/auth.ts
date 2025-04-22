@@ -202,7 +202,7 @@ export const getUserRoleManagement = async (params: {
 }) => {
   const { limit, search, page } = params;
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
+  const response = await fetch(`/api/user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
