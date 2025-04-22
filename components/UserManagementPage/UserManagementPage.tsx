@@ -1,3 +1,4 @@
+import { Separator } from "../ui/separator";
 import UserManagementTable from "./UserManagementTable";
 
 const UserManagementPage = () => {
@@ -8,6 +9,9 @@ const UserManagementPage = () => {
         This is the user management page. Here you can manage the users in the
         database.
       </p>
+
+      <Separator className="bg-white/20" />
+
       <section className="mt-4">
         <UserManagementTable />
       </section>

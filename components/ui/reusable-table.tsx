@@ -74,9 +74,9 @@ const ReusableTable = <T extends object>({
               onClick={() => setActivePage(page)}
               className={`${
                 activePage === page
-                  ? "bg-red-500 text-white"
+                  ? "bg-zinc-800 text-white"
                   : "border border-zinc-300 text-zinc-700 dark:border-zinc-500 dark:text-zinc-300"
-              } rounded-lg px-3 py-2 hover:bg-red-600 hover:text-white transition`}
+              } rounded-lg px-3 py-2 hover:bg-zinc-700 hover:text-white transition`}
             >
               {page}
             </Button>
@@ -101,17 +101,17 @@ const ReusableTable = <T extends object>({
       <ScrollArea className={`relative w-full overflow-x-auto ${className}`}>
         {isFetchingList && <TableLoading />}
 
-        <Table className="min-w-full table-auto border-separate border-spacing-0 dark:bg-red-300 border-white">
+        <Table className="min-w-full table-auto border-separate border-spacing-0 bg-white text-zinc-900 dark:bg-white/10 dark:text-white">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="bg-stone-100 dark:bg-stone-600"
+                className="bg-zinc-200 dark:bg-zinc-700"
               >
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="py-2 px-4 text-center text-md font-extrabold text-white border-b border-r bg-red-500 border-white dark:text-zinc-300 dark:border-zinc-500"
+                    className="py-2 px-4 text-center text-md font-extrabold text-zinc-700 bg-zinc-200 border-b border-r border-white dark:text-zinc-300 dark:bg-zinc-700 dark:border-zinc-500"
                   >
                     {header.isPlaceholder
                       ? null
@@ -130,13 +130,12 @@ const ReusableTable = <T extends object>({
               table.getExpandedRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="transition-all duration-300 hover:bg-red-200"
-                  data-state={row.getIsSelected() && "selected"}
+                  className="transition-all bg-white/60 duration-300 hover:bg-zinc-100 dark:bg-zinc-800 hover:dark:bg-zinc-700"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="py-3 px-4 text-sm text-zinc-700 border-b border-r border-white dark:text-white dark:border-zinc-500 hover:bg-red-200 hover:text-white"
+                      className="py-3 px-4 text-sm text-zinc-700 border-b border-r border-white dark:text-white dark:border-zinc-500"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -161,8 +160,8 @@ const ReusableTable = <T extends object>({
           <tfoot>
             <TableRow>
               <TableCell colSpan={columns.length}>
-                <div className="flex justify-between items-center py-2 px-4 border-t border-white bg-red-500 dark:border-zinc-500">
-                  <span className="text-sm text-white">
+                <div className="flex justify-between items-center py-2 px-4 border-t border-zinc-300 bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800">
+                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
                     Showing {startEntry}–{endEntry} of {totalCount} entries
                   </span>
                 </div>
@@ -172,7 +171,7 @@ const ReusableTable = <T extends object>({
         </Table>
 
         <ScrollBar
-          className="bg-gray-700 dark:bg-red-500"
+          className="bg-zinc-400 dark:bg-zinc-600"
           orientation="horizontal"
         />
       </ScrollArea>
@@ -183,7 +182,7 @@ const ReusableTable = <T extends object>({
             variant="outline"
             size="sm"
             onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
-            className="bg-red-500 text-white rounded-lg px-3 py-2 hover:bg-red-600 transition dark:bg-red-400 dark:hover:bg-red-500 dark:text-white"
+            className="bg-zinc-800 text-white rounded-lg px-3 py-2 hover:bg-zinc-700 transition dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
             <ChevronLeft />
           </Button>
@@ -198,7 +197,7 @@ const ReusableTable = <T extends object>({
             onClick={() =>
               setActivePage((prev) => Math.min(prev + 1, pageCount))
             }
-            className="text-white rounded-lg px-3 py-2 bg-red-500 hover:bg-red-600 transition dark:hover:bg-red-500 dark:text-white"
+            className="bg-zinc-800 text-white rounded-lg px-3 py-2 hover:bg-zinc-700 transition dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
             <ChevronRight />
           </Button>

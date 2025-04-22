@@ -1,3 +1,4 @@
+import { Separator } from "../ui/separator";
 import AdminRoleTable from "./AdminRoleTable";
 
 const AdminRolePage = () => {
@@ -8,6 +9,9 @@ const AdminRolePage = () => {
         This is the admin role page. Here you can manage the admin roles in the
         database.
       </p>
+
+      <Separator className="bg-white/20" />
+
       <section className="mt-4">
         <AdminRoleTable />
       </section>

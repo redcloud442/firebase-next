@@ -169,7 +169,8 @@ export const updateUser = async (params: {
     | "promote"
     | "demote"
     | "update-avatar"
-    | "verify";
+    | "verify"
+    | "delete-profile";
   photoURL?: string;
   actorEmail: string;
   actorUid: string;
@@ -200,6 +201,12 @@ export const updateUser = async (params: {
 
   if (type === "verify") {
     await firebaseAdmin.auth().updateUser(userUid, { emailVerified: true });
+  }
+
+  if (type === "delete-profile") {
+    await firebaseAdmin.auth().updateUser(userUid, {
+      photoURL: null,
+    });
   }
 
   await firebaseAdmin

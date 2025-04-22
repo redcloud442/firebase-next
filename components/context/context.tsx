@@ -11,7 +11,7 @@ export interface User extends UserInfo {
 
 export interface AuthContextValue {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue>({

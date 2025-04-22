@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ReusableTable from "../ui/reusable-table";
+import { Separator } from "../ui/separator";
 import { accountHistoryColumns } from "./AccountHistoryColumn";
 const AccountHistory = () => {
   const { accountHistory, setAccountHistory } = useAccountHistoryStore();
@@ -71,12 +72,14 @@ const AccountHistory = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex justify-between">
+      <CardHeader className="flex justify-between items-center">
         <CardTitle className="text-xl">Account History</CardTitle>
+
         <Button disabled={isLoading} variant="outline" onClick={handleRefresh}>
-          <RefreshCcw className="size-4" />
+          <RefreshCcw className="size-4" /> Refresh
         </Button>
       </CardHeader>
+      <Separator className="bg-white/20" />
       <CardContent className="space-y-4 text-lg text-muted-foreground">
         <ReusableTable
           activePage={activePage}

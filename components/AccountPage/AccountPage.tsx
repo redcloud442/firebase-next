@@ -13,6 +13,7 @@ import AvatarDropzone from "../ui/drop-zone";
 import TableLoading from "../ui/table-loading";
 import AccountEditProfile from "./AccountEditProfile";
 import AccountHistory from "./AccountHistory";
+import AccountRemoveProfileModal from "./AccountRemoveProfileModal";
 
 const AccountPage = () => {
   const { user, setUser } = useAuth();
@@ -59,16 +60,55 @@ const AccountPage = () => {
     }
   };
 
+  const handleDeleteProfile = async () => {
+    try {
+      setIsUploading(true);
+      await updateUser({
+        userUid: user?.uid ?? "",
+        type: "delete-profile",
+      });
+      await refreshUser();
+      const updatedUser = {
+        ...user,
+        photoURL: null,
+        emailVerified: user?.emailVerified ?? false,
+        customClaims: user?.customClaims ?? { admin: false },
+        displayName: user?.displayName ?? null,
+        email: user?.email ?? null,
+        phoneNumber: user?.phoneNumber ?? null,
+        providerId: user?.providerId ?? "",
+        uid: user?.uid ?? "",
+      };
+      setUser(updatedUser);
+      toast.success("Profile deleted successfully");
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8">
       {isUploading && <TableLoading />}
       <Card className="w-full">
         <CardHeader className="flex flex-col items-center gap-4">
-          <AvatarDropzone
-            avatarUrl={user?.photoURL ?? ""}
-            onFileUpload={handleAvatarUpload}
-            email={user?.email ?? ""}
-          />
+          <div className="relative">
+            {user?.photoURL && (
+              <AccountRemoveProfileModal
+                handleDeleteProfile={handleDeleteProfile}
+              />
+            )}
+            <AvatarDropzone
+              avatarUrl={user?.photoURL ?? null}
+              onFileUpload={handleAvatarUpload}
+              email={user?.email ?? ""}
+            />
+          </div>
 
           <CardTitle className="text-xl">{user?.email}</CardTitle>
         </CardHeader>

@@ -112,7 +112,8 @@ export const updateUser = async (params: {
     | "promote"
     | "demote"
     | "update-avatar"
-    | "verify";
+    | "verify"
+    | "delete-profile";
   photoURL?: string;
 }) => {
   const { userUid, type, photoURL } = params;
@@ -201,7 +202,7 @@ export const getUserRoleManagement = async (params: {
 }) => {
   const { limit, search, page } = params;
 
-  const response = await fetch("/api/user", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
