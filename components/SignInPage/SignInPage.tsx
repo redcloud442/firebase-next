@@ -63,7 +63,7 @@ const SignIn = () => {
         <div className="mb-6 space-y-4 flex flex-col items-center">
           <Label
             htmlFor="email"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Email
           </Label>
@@ -71,7 +71,7 @@ const SignIn = () => {
             id="email"
             type="email"
             {...register("email")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your email"
           />
           {errors.email && (
@@ -83,7 +83,7 @@ const SignIn = () => {
         <div className="mb-6 space-y-4 flex flex-col items-center">
           <Label
             htmlFor="password"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Password
           </Label>
@@ -91,7 +91,7 @@ const SignIn = () => {
             id="password"
             type="password"
             {...register("password")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your password"
           />
 

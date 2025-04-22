@@ -59,14 +59,16 @@ const SignUp = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md bg-white/30 backdrop-blur-md rounded-lg p-8 shadow-lg z-50"
       >
-        <h2 className="text-2xl font-normal mb-6 text-center">SIGN UP</h2>
+        <h2 className="text-2xl font-normal mb-6 text-center dark:text-black">
+          SIGN UP
+        </h2>
 
         {/* Email */}
 
         <div className="mb-4 flex flex-col items-center">
           <label
             htmlFor="firstname"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Firstname
           </label>
@@ -74,7 +76,7 @@ const SignUp = () => {
             id="firstname"
             type="text"
             {...register("firstname")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your firstname"
           />
           {errors.firstname && (
@@ -87,7 +89,7 @@ const SignUp = () => {
         <div className="mb-4 flex flex-col items-center">
           <label
             htmlFor="lastname"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Lastname
           </label>
@@ -95,7 +97,7 @@ const SignUp = () => {
             id="lastname"
             type="text"
             {...register("lastname")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your lastname"
           />
           {errors.lastname && (
@@ -108,7 +110,7 @@ const SignUp = () => {
         <div className="mb-4 flex flex-col items-center">
           <label
             htmlFor="email"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Email
           </label>
@@ -116,7 +118,7 @@ const SignUp = () => {
             id="email"
             type="email"
             {...register("email")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your email"
           />
           {errors.email && (
@@ -128,7 +130,7 @@ const SignUp = () => {
         <div className="mb-4 flex flex-col items-center">
           <label
             htmlFor="password"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Password
           </label>
@@ -136,7 +138,7 @@ const SignUp = () => {
             id="password"
             type="password"
             {...register("password")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Enter your password"
           />
           {errors.password && (
@@ -150,7 +152,7 @@ const SignUp = () => {
         <div className="mb-6 flex flex-col items-center">
           <label
             htmlFor="confirmPassword"
-            className="block text-md text-center font-normal mb-1"
+            className="block text-md text-center font-normal mb-1 dark:text-black"
           >
             Confirm Password
           </label>
@@ -158,7 +160,7 @@ const SignUp = () => {
             id="confirmPassword"
             type="password"
             {...register("confirmPassword")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
             placeholder="Confirm your password"
           />
           {errors.confirmPassword && (
