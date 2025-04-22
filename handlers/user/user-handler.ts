@@ -324,6 +324,45 @@ export const resetProgress = async (
   });
 };
 
+export const deleteUser = async (
+  uid: string,
+  actorUid: string,
+  email: string
+) => {
+  try {
+    const userRef = firebaseAdmin.database().ref(`users/${uid}`);
+
+    const snapshot = await userRef.once("value");
+    const userData = snapshot.val();
+
+    if (!userData) return;
+
+    const user = await firebaseAdmin
+      .auth()
+      .getUserByEmail(userData.User_Information.email);
+
+    if (user) {
+      await firebaseAdmin.auth().deleteUser(user.uid);
+    }
+
+    await firebaseAdmin
+      .firestore()
+      .collection("user-history")
+      .doc(actorUid)
+      .collection("actions")
+      .add({
+        type: "delete-user",
+        date: new Date(),
+        actionReceivedBy: userData?.User_Information?.email ?? "",
+        actionBy: email,
+      });
+
+    await firebaseAdmin.database().ref(`users/${uid}`).remove();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getUser = async (uid: string) => {
   const userRef = firebaseAdmin.database().ref(`users/${uid}`);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { getAdminUsers, updateUser } from "@/service/user/auth";
+import { deleteUser, getAdminUsers, updateUser } from "@/service/user/auth";
 import { AdminUser } from "@/utils/types";
 import {
   ColumnDef,
@@ -60,11 +60,15 @@ const UserManagementTable = () => {
 
   const handleUpdateUser = async (
     userUid: string,
-    type: "disable" | "enable" | "promote" | "demote" | "verify"
+    type: "disable" | "enable" | "promote" | "demote" | "verify" | "delete"
   ) => {
     try {
       setIsLoading(true);
-      await updateUser({ userUid, type });
+      if (type === "delete") {
+        await deleteUser({ userUid });
+      } else {
+        await updateUser({ userUid, type });
+      }
 
       switch (type) {
         case "disable":
@@ -101,6 +105,9 @@ const UserManagementTable = () => {
               user.uid === userUid ? { ...user, isVerified: true } : user
             ) as AdminUser[]
           );
+          break;
+        case "delete":
+          setUsers(users.filter((user) => user.uid !== userUid));
           break;
       }
 

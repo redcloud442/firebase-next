@@ -247,3 +247,22 @@ export const getUserRoleManagementExport = async (params: {
 
   return data;
 };
+
+export const deleteUser = async (params: { userUid: string }) => {
+  const { userUid } = params;
+
+  const response = await fetch(`/api/user/${userUid}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to delete user");
+  }
+
+  return data;
+};

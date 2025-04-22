@@ -16,7 +16,8 @@ import { DropdownMenuItem } from "../ui/dropdown-menu";
 export const userColumns = (
   users: userReturnData[],
   handleProceedToUser: (uid: string) => void,
-  handleResetProgress: (uid: string) => void
+  handleResetProgress: (uid: string) => void,
+  handleDeleteUser: (uid: string) => void
 ): ColumnDef<userReturnData>[] => {
   const staticKeys = ["id", "email", "name", "rtime"];
 
@@ -108,6 +109,9 @@ export const userColumns = (
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleResetProgress(uuid)}>
                 Reset Progress
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDeleteUser(uuid)}>
+                Delete Account
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

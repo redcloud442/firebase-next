@@ -1,6 +1,10 @@
 "use client";
 
-import { getUserRoleManagement, resetProgress } from "@/service/user/auth";
+import {
+  deleteUser,
+  getUserRoleManagement,
+  resetProgress,
+} from "@/service/user/auth";
 import { userReturnData } from "@/utils/types";
 import {
   ColumnDef,
@@ -101,7 +105,29 @@ const UserManagementTable = () => {
     }
   };
 
-  const columns = userColumns(users, handleProceedToUser, handleResetProgress);
+  const handleDeleteUser = async (uid: string) => {
+    try {
+      setIsLoading(true);
+      await deleteUser({ userUid: uid });
+
+      setUsers(users.filter((user) => user.id !== uid));
+
+      toast.success("User deleted successfully");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const columns = userColumns(
+    users,
+    handleProceedToUser,
+    handleResetProgress,
+    handleDeleteUser
+  );
 
   const table = useReactTable({
     data: users,

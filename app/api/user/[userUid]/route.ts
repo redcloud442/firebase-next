@@ -1,4 +1,5 @@
 import {
+  deleteUser,
   resetProgress,
   updateUser,
   updateUserChangePassword,
@@ -79,4 +80,32 @@ export const DELETE = async (
   await resetProgress(userUid, email!, uid!);
 
   return NextResponse.json({ message: "Progress reset" });
+};
+
+export const POST = async (
+  req: Request,
+  { params }: { params: Promise<{ userUid: string }> }
+) => {
+  try {
+    const { admin, email, uid } = await getAuthUser();
+
+    if (!admin) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { userUid } = await params;
+
+    await deleteUser(userUid, uid!, email!);
+
+    return NextResponse.json({ message: "User deleted" });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(
+      { message: "Failed to delete user" },
+      { status: 500 }
+    );
+  }
 };

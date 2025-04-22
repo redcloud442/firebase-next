@@ -16,7 +16,7 @@ import {
 type Props = {
   handleUpdateUser: (
     userUid: string,
-    type: "disable" | "enable" | "promote" | "demote" | "verify"
+    type: "disable" | "enable" | "promote" | "demote" | "verify" | "delete"
   ) => void;
   handleProceedToUser: (userUid: string) => void;
 };
