@@ -20,7 +20,9 @@ import {
 } from "@/components/ui/sidebar";
 import { logoutUser } from "@/service/user/auth";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import { useAuth } from "../context/context";
+
 export function NavUser() {
   const { user } = useAuth();
   const router = useRouter();
@@ -35,6 +37,12 @@ export function NavUser() {
     await logoutUser();
     router.push("/sign-in");
   };
+  const photoUrl = useCallback(() => {
+    if (user?.photoURL) {
+      return user.photoURL;
+    }
+    return "";
+  }, [user?.photoURL]);
 
   return (
     <SidebarMenu>
@@ -46,12 +54,9 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={user?.photoURL ?? ""}
-                  alt={user?.displayName ?? ""}
-                />
-                <AvatarFallback className="rounded-lg">
-                  {user?.displayName?.charAt(0)} {user?.displayName?.charAt(1)}
+                <AvatarImage src={photoUrl()} alt={user?.email ?? ""} />
+                <AvatarFallback className="rounded-lg uppercase">
+                  {user?.email?.charAt(0)} {user?.email?.charAt(1)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">

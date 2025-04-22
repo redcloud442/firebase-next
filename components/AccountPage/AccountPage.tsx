@@ -15,11 +15,8 @@ import AccountEditProfile from "./AccountEditProfile";
 import AccountHistory from "./AccountHistory";
 
 const AccountPage = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    user?.photoURL ?? null
-  );
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -47,9 +44,8 @@ const AccountPage = () => {
         photoURL: url,
       });
 
+      setUser({ ...user, photoURL: url });
       await refreshUser();
-
-      setAvatarUrl(url);
 
       toast.success("Avatar updated successfully");
     } catch (err) {
@@ -69,7 +65,7 @@ const AccountPage = () => {
       <Card className="w-full">
         <CardHeader className="flex flex-col items-center gap-4">
           <AvatarDropzone
-            avatarUrl={avatarUrl}
+            avatarUrl={user?.photoURL ?? ""}
             onFileUpload={handleAvatarUpload}
             email={user?.email ?? ""}
           />

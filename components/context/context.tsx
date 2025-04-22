@@ -11,10 +11,12 @@ export interface User extends UserInfo {
 
 export interface AuthContextValue {
   user: User | null;
+  setUser: (user: User) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
   user: null,
+  setUser: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
