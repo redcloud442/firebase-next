@@ -111,12 +111,12 @@ const SignIn = () => {
             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
         </div>
+        <div className="flex items-center justify-center">
+          <Link className="text-blue-500 underline" href="/reset-password">
+            Forgot Password?
+          </Link>
+        </div>
       </form>
-      <div className="flex items-center justify-center">
-        <Link className="text-blue-500 underline" href="/reset-password">
-          Forgot Password?
-        </Link>
-      </div>
     </div>
   );
 };
