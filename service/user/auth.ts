@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 
 import { auth } from "@/utils/firebase/firebase";
 import { AdminUser } from "@/utils/types";
@@ -55,20 +55,16 @@ export const registerUser = async (params: {
   const { email, password, firstname, lastname } = params;
 
   try {
-    const user = await createUserWithEmailAndPassword(auth, email, password);
-
-    const idToken = await user.user.getIdToken();
-
     await fetch("/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ idToken, firstname, lastname }),
+      body: JSON.stringify({ firstname, lastname, email, password }),
     });
 
-    return user;
+    return { success: true };
   } catch (error) {
     await signOut(auth);
     if (error instanceof Error) {
