@@ -52,7 +52,7 @@ const data = {
           url: "/user-management",
         },
         {
-          title: "Admin Roles",
+          title: "User Roles",
           url: "/admin-role",
         },
       ],
