@@ -149,6 +149,12 @@ export const adminRoleColumns = ({
                   Verify Account
                 </DropdownMenuItem>
               )}
+
+              <DropdownMenuItem
+                onClick={() => handleUpdateUser(uuid, "delete")}
+              >
+                Delete Account
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

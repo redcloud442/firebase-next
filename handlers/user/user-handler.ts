@@ -342,6 +342,12 @@ export const deleteUser = async (
     const snapshot = await userRef.once("value");
     const userData = snapshot.val();
 
+    const userByuid = await firebaseAdmin.auth().getUserByEmail(uid);
+
+    if (userByuid) {
+      await firebaseAdmin.auth().deleteUser(userByuid.uid);
+    }
+
     if (!userData) return;
 
     const user = await firebaseAdmin
