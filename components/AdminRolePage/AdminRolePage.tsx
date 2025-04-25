@@ -4,9 +4,9 @@ import AdminRoleTable from "./AdminRoleTable";
 const AdminRolePage = () => {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Admin Role Management</h1>
+      <h1 className="text-2xl font-bold">User Role Management</h1>
       <p>
-        This is the admin role page. Here you can manage the admin roles in the
+        This is the user role page. Here you can manage the user roles in the
         database.
       </p>
 
