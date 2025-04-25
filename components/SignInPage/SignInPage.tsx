@@ -112,7 +112,11 @@ const SignIn = () => {
           </Button>
         </div>
         <div className="flex items-center justify-center">
-          <Link className="text-blue-500 underline" href="/reset-password">
+          <Link
+            type="button"
+            className="text-blue-500 underline"
+            href="/reset-password"
+          >
             Forgot Password?
           </Link>
         </div>
