@@ -115,7 +115,7 @@ const SignIn = () => {
           <Link
             type="button"
             className="text-blue-500 underline"
-            href="/reset-password"
+            href="/forgot-password"
           >
             Forgot Password?
           </Link>
