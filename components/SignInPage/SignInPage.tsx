@@ -4,7 +4,6 @@ import { loginUser } from "@/service/user/auth";
 import { SignInFormData, signInSchema } from "@/utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -110,13 +109,6 @@ const SignIn = () => {
           >
             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
-        </div>
-
-        <div className="flex items-center justify-center mt-4 gap-2 w-full">
-          <span>Don&apos;t have an account?</span>
-          <Link href="/sign-up" className="text-red-500 hover:underline">
-            Sign up
-          </Link>
         </div>
       </form>
     </div>
