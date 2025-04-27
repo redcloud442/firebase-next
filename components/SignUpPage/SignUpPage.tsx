@@ -46,7 +46,9 @@ const SignUp = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md bg-white/30 backdrop-blur-md rounded-lg p-8 shadow-lg"
       >
-        <h2 className="text-2xl font-semibold text-center mb-6">Create User</h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          Create Admin
+        </h2>
 
         {/* Firstname */}
         <div className="mb-4">
