@@ -94,6 +94,6 @@ export const getDashboardData = async () => {
       quizAttemptCount > 0 ? totalQuizScore / quizAttemptCount : 0,
     mostCompletedStage,
     leastCompletedStage,
-    averageTimeSpent: totalUsers > 0 ? totalTimeSpent / totalUsers : 0,
+    averageTimeSpent: totalUsers > 0 ? totalTimeSpent / (totalUsers * 60) : 0,
   };
 };
