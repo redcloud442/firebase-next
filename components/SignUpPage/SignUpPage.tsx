@@ -156,7 +156,7 @@ const SignUp = () => {
           disabled={isSubmitting}
           className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
         >
-          {isSubmitting ? "Creating User..." : "Create User"}
+          {isSubmitting ? "Creating Admin..." : "Create Admin"}
         </Button>
       </form>
     </div>
