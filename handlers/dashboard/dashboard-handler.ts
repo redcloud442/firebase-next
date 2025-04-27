@@ -6,7 +6,7 @@ export const getDashboardData = async () => {
   const userRef = firebaseAdmin.database().ref("users");
   const snapshot = await userRef.once("value");
 
-  const users: Record<string, UserData> = snapshot.val();
+  const users: Record<string, UserData> = snapshot.val() || {};
 
   let totalUsers = 0;
   let activePlayers = 0;
@@ -24,15 +24,21 @@ export const getDashboardData = async () => {
 
     if (user.Quiz_Info) {
       const quiz = user.Quiz_Info;
-      const durationSec = parseDuration(quiz.duration);
 
-      totalQuizAttempts++;
-      totalCorrectAnswers += quiz.correct_answers;
-      totalQuizScore += quiz.score;
-      quizAttemptCount++;
-      quizTotal += 20;
+      // Only proceed if correct_answers and score are numbers
+      if (
+        typeof quiz.correct_answers === "number" &&
+        typeof quiz.score === "number"
+      ) {
+        const durationSec = parseDuration(quiz.duration);
 
-      totalTimeSpent += durationSec;
+        totalQuizAttempts++;
+        totalCorrectAnswers += quiz.correct_answers;
+        totalQuizScore += quiz.score;
+        quizAttemptCount++;
+        quizTotal += 20; // assuming each quiz is out of 20 points
+        totalTimeSpent += durationSec;
+      }
     }
 
     if (user.Game_Info) {
@@ -40,27 +46,32 @@ export const getDashboardData = async () => {
 
       Object.entries(user.Game_Info).forEach(([category, games]) => {
         Object.entries(games).forEach(([game, gameData]) => {
-          const durationSec = parseDuration(gameData.duration);
+          const durationSec = parseDuration(gameData.duration || "0s"); // fallback in case duration is missing
           totalTimeSpent += durationSec;
 
           const key = `${category}/${game}`;
           gameStageCompletion[key] = (gameStageCompletion[key] || 0) + 1;
 
           if (
-            ["started", "in_progress", "completed"].includes(gameData.status)
+            ["started", "in_progress", "completed"].includes(
+              gameData.status || ""
+            )
           ) {
             userActive = true;
           }
         });
       });
 
-      if (userActive) activePlayers++;
+      if (userActive) {
+        activePlayers++;
+      }
     }
   });
 
   const sortedStages = Object.entries(gameStageCompletion).sort(
     (a, b) => b[1] - a[1]
   );
+
   const mostCompletedStage = sortedStages[0]?.[0] || "N/A";
   const leastCompletedStage = sortedStages.at(-1)?.[0] || "N/A";
 
@@ -69,7 +80,9 @@ export const getDashboardData = async () => {
     activePlayers,
     totalQuizAttempts,
     successRate:
-      totalQuizAttempts > 0 ? (totalCorrectAnswers / quizTotal) * 100 : 0,
+      totalQuizAttempts > 0 && quizTotal > 0
+        ? (totalCorrectAnswers / quizTotal) * 100
+        : 0,
     averageQuizScore:
       quizAttemptCount > 0 ? totalQuizScore / quizAttemptCount : 0,
     mostCompletedStage,
