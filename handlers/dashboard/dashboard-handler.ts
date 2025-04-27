@@ -1,6 +1,6 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
 import { parseDuration } from "@/utils/function";
-import { UserData } from "@/utils/types";
+import { QuizInfo, UserData } from "@/utils/types";
 
 export const getDashboardData = async () => {
   const userRef = firebaseAdmin.database().ref("users");
@@ -23,22 +23,29 @@ export const getDashboardData = async () => {
     totalUsers++;
 
     if (user.Quiz_Info) {
-      const quiz = user.Quiz_Info;
+      Object.values(user.Quiz_Info).forEach((quiz) => {
+        if (typeof quiz === "object" && quiz !== null) {
+          const durationSec = parseDuration(
+            (quiz as QuizInfo).duration || "0s"
+          ); // default in case missing
 
-      // Only proceed if correct_answers and score are numbers
-      if (
-        typeof quiz.correct_answers === "number" &&
-        typeof quiz.score === "number"
-      ) {
-        const durationSec = parseDuration(quiz.duration);
-
-        totalQuizAttempts++;
-        totalCorrectAnswers += quiz.correct_answers;
-        totalQuizScore += quiz.score;
-        quizAttemptCount++;
-        quizTotal += 20; // assuming each quiz is out of 20 points
-        totalTimeSpent += durationSec;
-      }
+          totalQuizAttempts++;
+          totalCorrectAnswers +=
+            typeof (quiz as QuizInfo).correct_answers === "number"
+              ? (quiz as QuizInfo).correct_answers
+              : 0;
+          totalQuizScore +=
+            typeof (quiz as QuizInfo).score === "number"
+              ? (quiz as QuizInfo).score
+              : 0;
+          quizAttemptCount++;
+          quizTotal +=
+            typeof (quiz as QuizInfo).total_questions === "number"
+              ? (quiz as QuizInfo).total_questions
+              : 0;
+          totalTimeSpent += durationSec;
+        }
+      });
     }
 
     if (user.Game_Info) {
@@ -46,7 +53,7 @@ export const getDashboardData = async () => {
 
       Object.entries(user.Game_Info).forEach(([category, games]) => {
         Object.entries(games).forEach(([game, gameData]) => {
-          const durationSec = parseDuration(gameData.duration || "0s"); // fallback in case duration is missing
+          const durationSec = parseDuration(gameData.duration || "0s");
           totalTimeSpent += durationSec;
 
           const key = `${category}/${game}`;
@@ -74,7 +81,7 @@ export const getDashboardData = async () => {
 
   const mostCompletedStage = sortedStages[0]?.[0] || "N/A";
   const leastCompletedStage = sortedStages.at(-1)?.[0] || "N/A";
-
+  console.log(totalQuizAttempts, quizTotal, totalCorrectAnswers);
   return {
     totalUsers,
     activePlayers,
