@@ -11,7 +11,7 @@ export async function GET() {
 
   const dashboardData = await getDashboardData();
 
-  console.log(dashboardData);
+
 
   return NextResponse.json(dashboardData);
 }
