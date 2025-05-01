@@ -79,9 +79,11 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
 
   const totalGames =
     Object.keys(carGames).length + Object.keys(motorcycleGames).length;
-
   const testDuration = timeToSeconds(
-    user.Quiz_Info?.duration?.toString() || "00:00:00"
+    Object.values(user.Quiz_Info || {}).reduce(
+      (sum, quiz) => sum + timeToSeconds(quiz.duration),
+      "00:00:00"
+    )
   );
 
   const playerPerformanceData = [

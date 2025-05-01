@@ -152,13 +152,15 @@ export const getUsersExport = async (params: {
 
     const name = user.User_Information?.name || "";
     const email = user.User_Information?.email || "";
-    const rtime = user.User_Information?.rtime || "";
 
     users.push({
       id: uid,
       "User Name": name,
       Email: email,
-      "Time Spent": rtime,
+      "Time Spent": Object.values(user.Quiz_Info || {}).reduce(
+        (acc, quiz) => acc + (quiz.duration ?? "00:00:00"),
+        "00:00:00"
+      ),
       ...(user.Quiz_Info && {
         "Correct Answers": Object.values(user.Quiz_Info).reduce(
           (acc, quiz) => acc + (quiz.correct_answers ?? 0),
