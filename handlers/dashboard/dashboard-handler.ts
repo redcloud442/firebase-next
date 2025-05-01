@@ -81,7 +81,7 @@ export const getDashboardData = async () => {
 
   const mostCompletedStage = sortedStages[0]?.[0] || "N/A";
   const leastCompletedStage = sortedStages.at(-1)?.[0] || "N/A";
-  console.log(totalQuizAttempts, quizTotal, totalCorrectAnswers);
+
   return {
     totalUsers,
     activePlayers,

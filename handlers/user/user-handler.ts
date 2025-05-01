@@ -78,20 +78,36 @@ export const getUsers = async (params: {
     if (matchesSearch) {
       filteredCount++;
 
+      // --- AGGREGATE Quiz_Info ---
+      let totalCorrect = 0;
+      let duration = "00:00:00"; // Default
+
+      if (user.Quiz_Info) {
+        for (const quiz of Object.values(user.Quiz_Info)) {
+          totalCorrect += quiz.correct_answers ?? 0;
+          // Note: Combining durations as strings isn't meaningful unless you convert to seconds.
+          // For now, we'll just grab the first duration found.
+          if (duration === "00:00:00" && quiz.duration) {
+            duration = quiz.duration;
+          }
+        }
+      }
+
+      // --- Count Game Info ---
+      const gameCarInfo = Object.keys(user.Game_Info?.Cars ?? {}).length;
+      const gameMotorcycleInfo = Object.keys(
+        user.Game_Info?.Motorcycle ?? {}
+      ).length;
+
       users.push({
         id: uid,
         name,
         email,
         rtime,
-        ...(user.Quiz_Info && {
-          correctAnswers: user.Quiz_Info.correct_answers ?? 0,
-          duration: user.Quiz_Info.duration ?? "00:00:00",
-        }),
-        ...(user.Game_Info && {
-          gameCarInfo: Object.keys(user.Game_Info.Cars ?? {}).length ?? 0,
-          gameMotorcycleInfo:
-            Object.keys(user.Game_Info.Motorcycle ?? {}).length ?? 0,
-        }),
+        correctAnswers: totalCorrect,
+        duration,
+        gameCarInfo,
+        gameMotorcycleInfo,
       });
     }
   });
@@ -144,8 +160,14 @@ export const getUsersExport = async (params: {
       Email: email,
       "Time Spent": rtime,
       ...(user.Quiz_Info && {
-        "Correct Answers": user.Quiz_Info.correct_answers ?? 0,
-        Duration: user.Quiz_Info.duration ?? "00:00:00",
+        "Correct Answers": Object.values(user.Quiz_Info).reduce(
+          (acc, quiz) => acc + (quiz.correct_answers ?? 0),
+          0
+        ),
+        Duration: Object.values(user.Quiz_Info).reduce(
+          (acc, quiz) => acc + (quiz.duration ?? "00:00:00"),
+          "00:00:00"
+        ),
       }),
       ...(user.Game_Info && {
         "Game Car Played": Object.keys(user.Game_Info.Cars ?? {}).length ?? 0,

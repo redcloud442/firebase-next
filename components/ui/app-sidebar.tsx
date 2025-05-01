@@ -47,10 +47,10 @@ const data = {
       icon: User2,
       isActive: true,
       items: [
-        // {
-        //   title: "User",
-        //   url: "/user-management",
-        // },
+        {
+          title: "User",
+          url: "/user-management",
+        },
         {
           title: "User Roles",
           url: "/user-role",

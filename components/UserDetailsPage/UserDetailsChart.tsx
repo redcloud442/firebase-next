@@ -71,7 +71,9 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
   const totalGames =
     Object.keys(carGames).length + Object.keys(motorcycleGames).length;
 
-  const testDuration = timeToSeconds(user.Quiz_Info?.duration || "00:00:00");
+  const testDuration = timeToSeconds(
+    user.Quiz_Info?.duration?.toString() || "00:00:00"
+  );
 
   const playerPerformanceData = [
     { metric: "Correct Answers", value: correctAnswers, fill: "#4f46e5" },
@@ -150,7 +152,7 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
             Games finished: {totalGames} <TrendingUp className="h-4 w-4" />
           </div>
           <div className="leading-none text-muted-foreground">
-            Player answered {totalQuestions} questions
+            Player answered {String(totalQuestions)} questions
           </div>
         </CardFooter>
       </Card>
