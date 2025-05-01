@@ -138,7 +138,8 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
                             y={viewBox.cy}
                             className="fill-foreground text-3xl font-bold"
                           >
-                            {correctAnswers.toLocaleString()} / 20
+                            {correctAnswers.toLocaleString()} /{" "}
+                            {totalQuestions.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
