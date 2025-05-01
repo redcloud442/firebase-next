@@ -31,9 +31,18 @@ import {
 import { UserData } from "@/utils/types";
 
 export function UserPerformanceCharts({ user }: { user: UserData }) {
-  const correctAnswers = user.Quiz_Info?.correct_answers || 0;
-  const wrongAnswers = user.Quiz_Info?.wrong_answers || 0;
-  const totalQuestions = user.Quiz_Info?.total_questions || 0;
+  const correctAnswers = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.correct_answers || 0),
+    0
+  );
+  const wrongAnswers = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.wrong_answers || 0),
+    0
+  );
+  const totalQuestions = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.total_questions || 0),
+    0
+  );
 
   const timeToSeconds = (duration = "00:00:00") => {
     const parts = duration.split(":").map(Number);
