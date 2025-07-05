@@ -1,7 +1,14 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
+import { getAuthUser } from "@/utils/firebase/firebaseApiContext";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const { admin } = await getAuthUser();
+
+  if (!admin) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const firestore = firebaseAdmin.firestore();
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
