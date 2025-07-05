@@ -1,20 +1,25 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
-import { authConfig } from "@/utils/firebase/firebaseConfig";
-import { refreshCookiesWithIdToken } from "next-firebase-auth-edge/lib/next/cookies";
-import { cookies, headers } from "next/headers";
+import { getAuthUser } from "@/utils/firebase/firebaseApiContext";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { idToken, firstname, lastname } = await request.json();
+  const { firstname, lastname, email, password } = await request.json();
+
+  const { admin } = await getAuthUser();
+
+  if (!admin) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   try {
-    const user = await firebaseAdmin.auth().verifyIdToken(idToken);
-
-    await firebaseAdmin.auth().setCustomUserClaims(user.uid, { admin: true });
-
-    await firebaseAdmin.auth().updateUser(user.uid, {
+    const user = await firebaseAdmin.auth().createUser({
+      email,
+      password,
+      displayName: `${firstname} ${lastname}`,
       emailVerified: true,
     });
+
+    await firebaseAdmin.auth().setCustomUserClaims(user.uid, { admin: true });
 
     await firebaseAdmin.firestore().collection("users").doc(user.uid).set({
       email: user.email,
@@ -25,18 +30,11 @@ export async function POST(request: NextRequest) {
       updatedAt: null,
     });
 
-    await refreshCookiesWithIdToken(
-      idToken,
-      await headers(),
-      await cookies(),
-      authConfig
-    );
-
-    return NextResponse.json({ message: "User logged in" });
+    return NextResponse.json({ message: "User created" });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { message: "User not logged in" },
+        { message: "User not created" },
         { status: 401 }
       );
     }

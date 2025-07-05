@@ -49,7 +49,9 @@ export type GameInfo = {
 
 export type UserData = {
   User_Information: UserInfo;
-  Quiz_Info?: QuizInfo;
+  Quiz_Info?: {
+    [category: string]: QuizInfo;
+  };
   Game_Info?: {
     [category: string]: {
       [game: string]: GameInfo;

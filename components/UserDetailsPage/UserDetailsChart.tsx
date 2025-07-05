@@ -31,9 +31,18 @@ import {
 import { UserData } from "@/utils/types";
 
 export function UserPerformanceCharts({ user }: { user: UserData }) {
-  const correctAnswers = user.Quiz_Info?.correct_answers || 0;
-  const wrongAnswers = user.Quiz_Info?.wrong_answers || 0;
-  const totalQuestions = user.Quiz_Info?.total_questions || 0;
+  const correctAnswers = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.correct_answers || 0),
+    0
+  );
+  const wrongAnswers = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.wrong_answers || 0),
+    0
+  );
+  const totalQuestions = Object.values(user.Quiz_Info || {}).reduce(
+    (sum, quiz) => sum + (quiz.total_questions || 0),
+    0
+  );
 
   const timeToSeconds = (duration = "00:00:00") => {
     const parts = duration.split(":").map(Number);
@@ -70,8 +79,12 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
 
   const totalGames =
     Object.keys(carGames).length + Object.keys(motorcycleGames).length;
-
-  const testDuration = timeToSeconds(user.Quiz_Info?.duration || "00:00:00");
+  const testDuration = timeToSeconds(
+    Object.values(user.Quiz_Info || {}).reduce(
+      (sum, quiz) => sum + timeToSeconds(quiz.duration),
+      "00:00:00"
+    )
+  );
 
   const playerPerformanceData = [
     { metric: "Correct Answers", value: correctAnswers, fill: "#4f46e5" },
@@ -127,7 +140,8 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
                             y={viewBox.cy}
                             className="fill-foreground text-3xl font-bold"
                           >
-                            {correctAnswers.toLocaleString()} / 20
+                            {correctAnswers.toLocaleString()} /{" "}
+                            {totalQuestions.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
@@ -150,7 +164,7 @@ export function UserPerformanceCharts({ user }: { user: UserData }) {
             Games finished: {totalGames} <TrendingUp className="h-4 w-4" />
           </div>
           <div className="leading-none text-muted-foreground">
-            Player answered {totalQuestions} questions
+            Player answered {String(totalQuestions)} questions
           </div>
         </CardFooter>
       </Card>

@@ -60,8 +60,12 @@ const data = {
           url: "/user-management",
         },
         {
-          title: "Admin Roles",
-          url: "/admin-role",
+          title: "User Roles",
+          url: "/user-role",
+        },
+        {
+          title: "Create Admin",
+          url: "/create-admin",
         },
       ],
     },

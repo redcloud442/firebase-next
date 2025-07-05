@@ -1,12 +1,12 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
 import { parseDuration } from "@/utils/function";
-import { UserData } from "@/utils/types";
+import { QuizInfo, UserData } from "@/utils/types";
 
 export const getDashboardData = async () => {
   const userRef = firebaseAdmin.database().ref("users");
   const snapshot = await userRef.once("value");
 
-  const users: Record<string, UserData> = snapshot.val();
+  const users: Record<string, UserData> = snapshot.val() || {};
 
   let totalUsers = 0;
   let activePlayers = 0;
@@ -23,16 +23,29 @@ export const getDashboardData = async () => {
     totalUsers++;
 
     if (user.Quiz_Info) {
-      const quiz = user.Quiz_Info;
-      const durationSec = parseDuration(quiz.duration);
+      Object.values(user.Quiz_Info).forEach((quiz) => {
+        if (typeof quiz === "object" && quiz !== null) {
+          const durationSec = parseDuration(
+            (quiz as QuizInfo).duration || "0s"
+          ); // default in case missing
 
-      totalQuizAttempts++;
-      totalCorrectAnswers += quiz.correct_answers;
-      totalQuizScore += quiz.score;
-      quizAttemptCount++;
-      quizTotal += 20;
-
-      totalTimeSpent += durationSec;
+          totalQuizAttempts++;
+          totalCorrectAnswers +=
+            typeof (quiz as QuizInfo).correct_answers === "number"
+              ? (quiz as QuizInfo).correct_answers
+              : 0;
+          totalQuizScore +=
+            typeof (quiz as QuizInfo).score === "number"
+              ? (quiz as QuizInfo).score
+              : 0;
+          quizAttemptCount++;
+          quizTotal +=
+            typeof (quiz as QuizInfo).total_questions === "number"
+              ? (quiz as QuizInfo).total_questions
+              : 0;
+          totalTimeSpent += durationSec;
+        }
+      });
     }
 
     if (user.Game_Info) {
@@ -40,27 +53,32 @@ export const getDashboardData = async () => {
 
       Object.entries(user.Game_Info).forEach(([category, games]) => {
         Object.entries(games).forEach(([game, gameData]) => {
-          const durationSec = parseDuration(gameData.duration);
+          const durationSec = parseDuration(gameData.duration || "0s");
           totalTimeSpent += durationSec;
 
           const key = `${category}/${game}`;
           gameStageCompletion[key] = (gameStageCompletion[key] || 0) + 1;
 
           if (
-            ["started", "in_progress", "completed"].includes(gameData.status)
+            ["started", "in_progress", "completed"].includes(
+              gameData.status || ""
+            )
           ) {
             userActive = true;
           }
         });
       });
 
-      if (userActive) activePlayers++;
+      if (userActive) {
+        activePlayers++;
+      }
     }
   });
 
   const sortedStages = Object.entries(gameStageCompletion).sort(
     (a, b) => b[1] - a[1]
   );
+
   const mostCompletedStage = sortedStages[0]?.[0] || "N/A";
   const leastCompletedStage = sortedStages.at(-1)?.[0] || "N/A";
 
@@ -69,11 +87,13 @@ export const getDashboardData = async () => {
     activePlayers,
     totalQuizAttempts,
     successRate:
-      totalQuizAttempts > 0 ? (totalCorrectAnswers / quizTotal) * 100 : 0,
+      totalQuizAttempts > 0 && quizTotal > 0
+        ? (totalCorrectAnswers / quizTotal) * 100
+        : 0,
     averageQuizScore:
       quizAttemptCount > 0 ? totalQuizScore / quizAttemptCount : 0,
     mostCompletedStage,
     leastCompletedStage,
-    averageTimeSpent: totalUsers > 0 ? totalTimeSpent / totalUsers : 0,
+    averageTimeSpent: totalUsers > 0 ? totalTimeSpent / (totalUsers * 60) : 0,
   };
 };

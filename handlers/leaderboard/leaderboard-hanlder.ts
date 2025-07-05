@@ -1,4 +1,5 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
+import { QuizInfo } from "@/utils/types";
 
 type LeaderboardType = "QUIZ" | "GAME";
 
@@ -22,12 +23,28 @@ export const getLeaderboardData = async (params: {
   const snapshot = await query.once("value");
 
   const leaderboardData: { userName: string; value: number }[] = [];
+  type quizType = Record<string, QuizInfo>;
 
   snapshot.forEach((child) => {
     const user = child.val();
 
+    const quizInfo = user.Quiz_Info as quizType;
+
     const userName = user.User_Information?.name || "Unknown";
-    const quizScore = user.Quiz_Info?.correct_answers || 0;
+    const quizScore = Object.values(quizInfo || {}).reduce(
+      (acc: number, quiz) => {
+        if (
+          typeof quiz === "object" &&
+          quiz !== null &&
+          "correct_answers" in quiz
+        ) {
+          return acc + (Number(quiz.correct_answers) || 0);
+        }
+        return acc;
+      },
+      0
+    );
+
     const cars = Object.keys(user.Game_Info?.Cars || {}).length;
     const motorcycles = Object.keys(user.Game_Info?.Motorcycle || {}).length;
     const vehicleCount = cars + motorcycles;

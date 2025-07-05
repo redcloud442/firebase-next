@@ -1,14 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { registerUser } from "@/service/user/auth";
 import { SignUpFormData, signUpSchema } from "@/utils/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { Button } from "../ui/button";
 
 const SignUp = () => {
@@ -31,52 +29,38 @@ const SignUp = () => {
         lastname: data.lastname,
       });
 
-      toast.success("Success. The user is created in Firebase");
-      router.push("/");
+      toast.success("User created successfully.");
+      router.push("/user-role");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("An unknown error occurred");
+        toast.error("An unknown error occurred.");
       }
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
-      <nav className="absolute top-0 left-0 w-full min-h-28 bg-black/20 z-50 flex items-center justify-center">
-        <h1 className="text-3xl sm:text-5xl font-black tracking-wide text-outline italic">
-          RoadWheelLearn
-        </h1>
-      </nav>
-      <Image
-        src="/bg-default.jpg"
-        alt="bg"
-        fill
-        className="object-cover object-center z-0"
-      />
+    <div className="flex items-center justify-center h-full px-4 dark:text-white">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md bg-white/30 backdrop-blur-md rounded-lg p-8 shadow-lg z-50"
+        className="w-full max-w-md bg-white/30 backdrop-blur-md rounded-lg p-8 shadow-lg"
       >
-        <h2 className="text-2xl font-normal mb-6 text-center dark:text-black">
-          SIGN UP
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          Create Admin
         </h2>
 
-        {/* Email */}
-
-        <div className="mb-4 flex flex-col items-center">
-          <label
-            htmlFor="firstname"
-            className="block text-md text-center font-normal mb-1 dark:text-black"
-          >
+        {/* Firstname */}
+        <div className="mb-4">
+          <label htmlFor="firstname" className="block text-sm font-medium">
             Firstname
           </label>
           <input
             id="firstname"
             type="text"
+            autoComplete="given-name"
             {...register("firstname")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 border rounded-md shadow-sm     s focus:outline-none focus:ring-2 focus:ring-red-300"
             placeholder="Enter your firstname"
           />
           {errors.firstname && (
@@ -86,18 +70,17 @@ const SignUp = () => {
           )}
         </div>
 
-        <div className="mb-4 flex flex-col items-center">
-          <label
-            htmlFor="lastname"
-            className="block text-md text-center font-normal mb-1 dark:text-black"
-          >
+        {/* Lastname */}
+        <div className="mb-4">
+          <label htmlFor="lastname" className="block text-sm font-medium">
             Lastname
           </label>
           <input
             id="lastname"
             type="text"
+            autoComplete="family-name"
             {...register("lastname")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
             placeholder="Enter your lastname"
           />
           {errors.lastname && (
@@ -107,18 +90,17 @@ const SignUp = () => {
           )}
         </div>
 
-        <div className="mb-4 flex flex-col items-center">
-          <label
-            htmlFor="email"
-            className="block text-md text-center font-normal mb-1 dark:text-black"
-          >
+        {/* Email */}
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
           <input
             id="email"
             type="email"
+            autoComplete="email"
             {...register("email")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
             placeholder="Enter your email"
           />
           {errors.email && (
@@ -127,18 +109,16 @@ const SignUp = () => {
         </div>
 
         {/* Password */}
-        <div className="mb-4 flex flex-col items-center">
-          <label
-            htmlFor="password"
-            className="block text-md text-center font-normal mb-1 dark:text-black"
-          >
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-sm font-medium">
             Password
           </label>
           <input
             id="password"
             type="password"
+            autoComplete="new-password"
             {...register("password")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
             placeholder="Enter your password"
           />
           {errors.password && (
@@ -149,18 +129,19 @@ const SignUp = () => {
         </div>
 
         {/* Confirm Password */}
-        <div className="mb-6 flex flex-col items-center">
+        <div className="mb-6">
           <label
             htmlFor="confirmPassword"
-            className="block text-md text-center font-normal mb-1 dark:text-black"
+            className="block text-sm font-medium"
           >
             Confirm Password
           </label>
           <input
             id="confirmPassword"
             type="password"
+            autoComplete="new-password"
             {...register("confirmPassword")}
-            className="w-full px-4 py-2 max-w-xs bg-opacity-80 border-1 dark:text-black border-white rounded-full shadow-md focus:outline-none dark:focus:ring-4 dark:focus:ring-white "
+            className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
             placeholder="Confirm your password"
           />
           {errors.confirmPassword && (
@@ -170,22 +151,13 @@ const SignUp = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-center">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full max-w-xs bg-red-600 text-white py-2 rounded-md  transition disabled:opacity-50"
-          >
-            {isSubmitting ? "Signing Up..." : "Sign Up"}
-          </Button>
-        </div>
-
-        <div className="flex items-center justify-center mt-4 gap-2 w-full">
-          <span>Already have an account?</span>
-          <Link href="/sign-in" className="text-red-500 hover:underline">
-            Sign in
-          </Link>
-        </div>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+        >
+          {isSubmitting ? "Creating Admin..." : "Create Admin"}
+        </Button>
       </form>
     </div>
   );

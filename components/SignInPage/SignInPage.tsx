@@ -43,7 +43,7 @@ const SignIn = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
       <nav className="absolute top-0 left-0 w-full min-h-28 bg-black/20 z-50 flex items-center justify-center">
         <h1 className="text-3xl sm:text-5xl font-black tracking-wide text-outline italic">
-          RoadWheelLearn
+          RoadWheeLearn
         </h1>
       </nav>
       <Image
@@ -111,11 +111,13 @@ const SignIn = () => {
             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
         </div>
-
-        <div className="flex items-center justify-center mt-4 gap-2 w-full">
-          <span>Don&apos;t have an account?</span>
-          <Link href="/sign-up" className="text-red-500 hover:underline">
-            Sign up
+        <div className="flex items-center justify-center">
+          <Link
+            type="button"
+            className="text-blue-500 underline"
+            href="/forgot-password"
+          >
+            Forgot Password?
           </Link>
         </div>
       </form>

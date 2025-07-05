@@ -1,8 +1,9 @@
 import SignUp from "@/components/SignUpPage/SignUpPage";
-import { UnprotectedRoute } from "@/utils/protection";
+import { protectedRoute } from "@/utils/protection";
 
 const page = async () => {
-  await UnprotectedRoute();
+  await protectedRoute();
+
   return <SignUp />;
 };
 
