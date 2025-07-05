@@ -83,3 +83,26 @@ export type DashboardData = {
   leastCompletedStage: string;
   averageTimeSpent: number;
 };
+
+export type Quiz = {
+  id: string;
+  question: string;
+  image: string;
+  is_deleted: boolean;
+  difficulty: string;
+  choices: string[];
+  correct_answer: number;
+  quizLanguage: string;
+  quiz_type: string;
+};
+
+export type CreateQuiz = {
+  question: string;
+  image: string;
+  is_deleted: boolean;
+  difficulty: string;
+  choices: { value: string }[];
+  correct_answer: number;
+  quizLanguage: string;
+  quiz_type: string;
+};

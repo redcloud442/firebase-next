@@ -38,6 +38,14 @@ const data = {
           title: "Leaderboard",
           url: "/leaderboard",
         },
+        {
+          title: "Quiz",
+          url: "/quiz",
+        },
+        {
+          title: "Feedback",
+          url: "/feedback",
+        },
       ],
     },
 
