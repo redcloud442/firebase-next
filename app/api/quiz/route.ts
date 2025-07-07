@@ -16,15 +16,12 @@ export async function GET(request: NextRequest) {
   const difficulty = searchParams.get("difficulty");
 
   try {
-    let query = firestore
+    const query = firestore
       .collectionGroup("quiz")
       .where("quizLanguage", "==", language)
       .where("quiz_type", "==", category)
-      .where("is_deleted", "==", false);
-
-    if (category === "theoretical" && difficulty) {
-      query = query.where("difficulty", "==", difficulty);
-    }
+      .where("is_deleted", "==", false)
+      .where("difficulty", "==", difficulty || "easy");
 
     const [snap, countSnap] = await Promise.all([
       query.get(),
