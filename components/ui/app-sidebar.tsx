@@ -42,10 +42,6 @@ const data = {
           title: "Quiz",
           url: "/quiz",
         },
-        {
-          title: "Feedback",
-          url: "/feedback",
-        },
       ],
     },
 
