@@ -21,11 +21,18 @@ export async function GET(request: NextRequest) {
       .where("quizLanguage", "==", language)
       .where("quiz_type", "==", category)
       .where("is_deleted", "==", false)
-      .where("difficulty", "==", difficulty || "easy");
+      .where("difficulty", "==", difficulty || "Easy");
 
     const [snap, countSnap] = await Promise.all([
       query.get(),
-      firestore.collectionGroup("quiz").count().get(),
+      firestore
+        .collectionGroup("quiz")
+        .where("quizLanguage", "==", language)
+        .where("quiz_type", "==", category)
+        .where("is_deleted", "==", false)
+        .where("difficulty", "==", difficulty || "easy")
+        .count()
+        .get(),
     ]);
 
     const quiz = snap.docs.map((d) => ({
