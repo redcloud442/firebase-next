@@ -5,10 +5,16 @@ import { Badge } from "../ui/badge";
 export const leaderBoardColumn = (
   pageIndex: number,
   pageSize: number,
-  leaderBoardType: "QUIZ" | "GAME"
+  leaderBoardType:
+    | "Motorcycle Driving Lessons"
+    | "Motorcycle Video Lessons"
+    | "Car Driving Lessons"
+    | "Car Video Lessons"
+    | "Road Sign Quiz"
+    | "Theoretical Quiz"
 ): ColumnDef<{
-  userName: string;
-  value: number;
+  userEmail: string;
+  CurrentStars: number;
 }>[] => {
   return [
     {
@@ -40,26 +46,26 @@ export const leaderBoardColumn = (
       },
     },
     {
-      accessorKey: "userName",
+      accessorKey: "userEmail",
       header: () => (
         <Button className="w-full " variant="ghost">
-          User Name
+          User Email
         </Button>
       ),
       cell: ({ row }) => {
-        const userName = row.getValue("userName") as string;
-        return <div className="font-medium text-center  ">{userName}</div>;
+        const userEmail = row.getValue("userEmail") as string;
+        return <div className="font-medium text-center  ">{userEmail}</div>;
       },
     },
     {
-      accessorKey: "value",
+      accessorKey: "CurrentStars",
       header: () => (
         <Button className="w-full " variant="ghost">
-          {leaderBoardType === "QUIZ" ? "Quiz Score" : "Game Count"}
+          {leaderBoardType.includes("Quiz") ? "Quiz Score" : "Stars Count"}
         </Button>
       ),
       cell: ({ row }) => {
-        const value = row.getValue("value") as number;
+        const value = row.getValue("CurrentStars") as number;
         return <div className="text-center">{value}</div>;
       },
     },

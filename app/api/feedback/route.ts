@@ -1,4 +1,4 @@
-import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
+import { getFeedback } from "@/handlers/feedback/feedback";
 import { getAuthUser } from "@/utils/firebase/firebaseApiContext";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,61 +9,29 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const firestore = firebaseAdmin.firestore();
-  const { searchParams } = new URL(request.url);
-  const userEmail = searchParams.get("email");
-  const startAfterDate = searchParams.get("startAfter");
-  const limit = 10;
-
-  let query;
-  let countSnap;
   try {
-    if (userEmail) {
-      query = firestore
-        .collection("feedback")
-        .doc(userEmail)
-        .collection("user_feedbacks")
-        .orderBy("date", "desc")
-        .limit(limit);
+    const { searchParams } = new URL(request.url);
 
-      if (startAfterDate) {
-        query = query.startAfter(new Date(startAfterDate));
-      }
+    const lastDocId = searchParams.get("lastDocId");
+    const lastDocParentId = searchParams.get("lastDocParentId");
+    const lastDocCollectionName = searchParams.get("lastDocCollectionName");
 
-      countSnap = await firestore
-        .collection("feedback")
-        .doc(userEmail)
-        .collection("user_feedbacks")
-        .count()
-        .get();
-    } else {
-      query = firestore.collectionGroup("user_feedbacks").limit(limit);
+    const limit = 10;
 
-      if (startAfterDate) {
-        query = query.startAfter(new Date(startAfterDate));
-      }
-
-      countSnap = await firestore
-        .collectionGroup("user_feedbacks")
-        .count()
-        .get();
-    }
-
-    const snap = await query.get();
-
-    const feedback = snap.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    }));
-
-    return NextResponse.json({
-      message: "Feedback fetched",
-      feedback,
-      totalCount: countSnap.data().count,
+    const feedback = await getFeedback({
+      lastDocId: lastDocId || "",
+      lastDocParentId: lastDocParentId || "",
+      lastDocCollectionName: lastDocCollectionName || "",
+      limit,
     });
+
+    return NextResponse.json(feedback);
   } catch (error) {
     return NextResponse.json(
-      { message: "Error fetching feedback", error: String(error) },
+      {
+        message: "Error fetching comments",
+        error: String(error),
+      },
       { status: 500 }
     );
   }

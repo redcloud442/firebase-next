@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 import ReusableTable from "../ui/reusable-table";
 
 type LeaderboardData = {
-  userName: string;
-  value: number;
+  userEmail: string;
+  CurrentStars: number;
 };
 
 type Props = {

@@ -14,25 +14,37 @@ import { Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { leaderBoardColumn } from "./LeaderboardColumn";
 import LeaderboardTabs from "./LeaderboardTabs";
 
 const AdminLeaderBoardsPage = () => {
   const [leaderboards, setLeaderboards] = useState<
-    { userName: string; value: number }[]
+    { userEmail: string; CurrentStars: number }[]
   >([]);
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
-  const [leaderBoardType, setLeaderBoardType] = useState<"QUIZ" | "GAME">(
-    "QUIZ"
-  );
+  const [leaderBoardType, setLeaderBoardType] = useState<
+    | "Motorcycle Driving Lessons"
+    | "Motorcycle Video Lessons"
+    | "Car Driving Lessons"
+    | "Car Video Lessons"
+    | "Road Sign Quiz"
+    | "Theoretical Quiz"
+  >("Motorcycle Driving Lessons");
   const [isFetchingList, setIsFetchingList] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const cachedLeaderboards = useRef<{
     [key: string]: {
-      data: { userName: string; value: number }[];
+      data: { userEmail: string; CurrentStars: number }[];
       totalCount: number;
     };
   }>({});
@@ -90,7 +102,15 @@ const AdminLeaderBoardsPage = () => {
   });
 
   const handleTabChange = (type?: string) => {
-    setLeaderBoardType(type as "QUIZ" | "GAME");
+    setLeaderBoardType(
+      type as
+        | "Motorcycle Driving Lessons"
+        | "Motorcycle Video Lessons"
+        | "Car Driving Lessons"
+        | "Car Video Lessons"
+        | "Road Sign Quiz"
+        | "Theoretical Quiz"
+    );
     setActivePage(1);
   };
 
@@ -105,13 +125,49 @@ const AdminLeaderBoardsPage = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="QUIZ" onValueChange={handleTabChange}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="QUIZ">Quiz</TabsTrigger>
-          <TabsTrigger value="GAME">Game</TabsTrigger>
+      <Select value={leaderBoardType} onValueChange={handleTabChange}>
+        <SelectTrigger className="w-full lg:hidden">
+          <SelectValue placeholder="Leaderboard" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Motorcycle Driving Lessons">
+            Motorcycle Driving Lessons
+          </SelectItem>
+
+          <SelectItem value="Motorcycle Video Lessons">
+            Motorcycle Video Lessons
+          </SelectItem>
+          <SelectItem value="Car Driving Lessons">
+            Car Driving Lessons
+          </SelectItem>
+          <SelectItem value="Car Video Lessons">Car Video Lessons</SelectItem>
+          <SelectItem value="Road Sign Quiz">Road Sign Quiz</SelectItem>
+          <SelectItem value="Theoretical Quiz">Theoretical Quiz</SelectItem>
+        </SelectContent>
+      </Select>
+      <Tabs
+        defaultValue="Motorcycle Driving Lessons"
+        onValueChange={handleTabChange}
+      >
+        <TabsList className="mb-4 lg:block hidden">
+          <TabsTrigger value="Motorcycle Driving Lessons">
+            Motorcycle Driving Lessons
+          </TabsTrigger>
+          <TabsTrigger value="Car Driving Lessons">
+            Car Driving Lessons
+          </TabsTrigger>
+          <TabsTrigger value="Motorcycle Video Lessons">
+            Motorcycle Video Lessons
+          </TabsTrigger>
+          <TabsTrigger value="Car Driving Lessons">
+            Car Driving Lessons
+          </TabsTrigger>
+          <TabsTrigger value="Car Video Lessons">Car Video Lessons</TabsTrigger>
+          <TabsTrigger value="Road Sign Quiz">Road Sign Quiz</TabsTrigger>
+          <TabsTrigger value="Theoretical Quiz">Theoretical Quiz</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="QUIZ">
+        <TabsContent value="Car Driving Lessons">
           <LeaderboardTabs
             table={table}
             columns={columns}
@@ -123,7 +179,55 @@ const AdminLeaderBoardsPage = () => {
           />
         </TabsContent>
 
-        <TabsContent value="GAME">
+        <TabsContent value="Car Video Lessons">
+          <LeaderboardTabs
+            table={table}
+            columns={columns}
+            activePage={activePage}
+            totalCount={totalCount}
+            setActivePage={setActivePage}
+            pageCount={pageCount}
+            isFetchingList={isFetchingList}
+          />
+        </TabsContent>
+
+        <TabsContent value="Motorcycle Driving Lessons">
+          <LeaderboardTabs
+            table={table}
+            columns={columns}
+            activePage={activePage}
+            totalCount={totalCount}
+            setActivePage={setActivePage}
+            pageCount={pageCount}
+            isFetchingList={isFetchingList}
+          />
+        </TabsContent>
+
+        <TabsContent value="Motorcycle Video Lessons">
+          <LeaderboardTabs
+            table={table}
+            columns={columns}
+            activePage={activePage}
+            totalCount={totalCount}
+            setActivePage={setActivePage}
+            pageCount={pageCount}
+            isFetchingList={isFetchingList}
+          />
+        </TabsContent>
+
+        <TabsContent value="Road Sign Quiz">
+          <LeaderboardTabs
+            table={table}
+            columns={columns}
+            activePage={activePage}
+            totalCount={totalCount}
+            setActivePage={setActivePage}
+            pageCount={pageCount}
+            isFetchingList={isFetchingList}
+          />
+        </TabsContent>
+
+        <TabsContent value="Theoretical Quiz">
           <LeaderboardTabs
             table={table}
             columns={columns}
