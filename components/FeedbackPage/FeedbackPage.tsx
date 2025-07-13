@@ -15,8 +15,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import { MessageSquare, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import DeleteModal from "./DeleteModal";
 
 type FeedbackItem = {
   id: string;
@@ -28,6 +31,7 @@ type FeedbackItem = {
 const FeedbackPage = () => {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [lastDocCursor, setLastDocCursor] = useState<{
     lastDocId: string | null;
@@ -95,6 +99,24 @@ const FeedbackPage = () => {
     }
   };
 
+  const handleDelete = async (id: string, email: string) => {
+    try {
+      console.log(id, email);
+
+      setIsDeleting(true);
+      const db = getFirestore();
+      await deleteDoc(doc(db, "feedback", email, "comments_feedback", id));
+
+      setFeedbackItems((prev) => prev.filter((item) => item.id !== id));
+
+      toast.success("Feedback deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete feedback");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <div>
@@ -122,8 +144,12 @@ const FeedbackPage = () => {
                 {feedbackItems.map((item) => (
                   <Card
                     key={item.id}
-                    className="hover:shadow-md transition-shadow hover:scale-105 duration-300 bg-gray-200/20"
+                    className="hover:shadow-md transition-shadow hover:scale-105 duration-300 bg-gray-200/20 relative"
                   >
+                    <DeleteModal
+                      onDelete={() => handleDelete(item.id, item.parentId)}
+                      isDeleting={isDeleting}
+                    />
                     <CardHeader>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
