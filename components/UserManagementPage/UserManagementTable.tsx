@@ -37,6 +37,7 @@ const UserManagementTable = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [pageTokens, setPageTokens] = useState<string[]>([""]);
 
   const { register, getValues, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
@@ -52,13 +53,17 @@ const UserManagementTable = () => {
 
       const { search } = getValues();
 
-      const { data, count } = await getUserRoleManagement({
-        page: activePage,
+      const { users, count, nextPageToken } = await getUserRoleManagement({
         limit: 10,
         search,
+        nextPageToken: pageTokens[activePage - 1] || undefined,
       });
-      setUsers(data as userReturnData[]);
+      setUsers(users as userReturnData[]);
       setCount(count);
+
+      if (nextPageToken && pageTokens.length === activePage) {
+        setPageTokens([...pageTokens, nextPageToken]);
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -80,18 +85,46 @@ const UserManagementTable = () => {
     try {
       setIsLoading(true);
       await resetProgress({ uid });
-      const userToReset = users.find((user) => user.id === uid);
+      const userToReset = users.find((user) => user.uid === uid);
 
       if (userToReset) {
         const resetData = {
-          rtime: userToReset.rtime,
+          dateCreated: userToReset.dateCreated,
           email: userToReset.email,
-          name: userToReset.name,
           id: uid,
+          progress: {
+            "Car Driving Lessons": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+            "Car Video Lessons": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+            "Motorcycle Driving Lessons": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+            "Motorcycle Video Lessons": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+            "Road Sign Quiz": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+            "Theoretical Quiz": {
+              CurrentStars: 0,
+              TotalStars: 0,
+            },
+          },
         };
 
-        setUsers((prevUsers) =>
-          prevUsers.map((user) => (user.id === uid ? { ...resetData } : user))
+        setUsers(
+          (prevUsers) =>
+            prevUsers.map((user) =>
+              user.uid === uid ? { ...resetData } : user
+            ) as userReturnData[]
         );
 
         toast.success("Progress reset successfully");
@@ -110,7 +143,7 @@ const UserManagementTable = () => {
       setIsLoading(true);
       await deleteUser({ userUid: uid });
 
-      setUsers(users.filter((user) => user.id !== uid));
+      setUsers(users.filter((user) => user.uid !== uid));
 
       toast.success("User deleted successfully");
     } catch (error) {

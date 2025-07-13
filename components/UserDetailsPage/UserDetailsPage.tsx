@@ -1,3 +1,4 @@
+import { formatCustom } from "@/utils/function";
 import { UserData } from "@/utils/types";
 import {
   Card,
@@ -6,8 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import UserAccordionChart from "./UserAccordionChart";
-import UserPerformanceCharts from "./UserDetailsChart";
+import { UserPerformanceChart } from "./UserDetailsChart";
 
 type UserDetailsPageProps = {
   user: UserData;
@@ -42,13 +42,15 @@ const UserDetailsPage = ({ user }: UserDetailsPageProps) => {
 
             <div className="flex flex-col gap-2">
               <p className="text-md font-medium">Date Created</p>
-              <p className="text-sm">{user.User_Information.rtime}</p>
+              <p className="text-sm">
+                {formatCustom(user.User_Information.rtime)}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
-      <UserPerformanceCharts user={user} />
-      <UserAccordionChart user={user} />
+      <UserPerformanceChart user={user} />
+      {/* <UserAccordionChart user={user} /> */}
     </div>
   );
 };

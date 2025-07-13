@@ -15,6 +15,7 @@ export const leaderBoardColumn = (
 ): ColumnDef<{
   userEmail: string;
   CurrentStars: number;
+  TotalStars: number;
 }>[] => {
   return [
     {
@@ -66,7 +67,13 @@ export const leaderBoardColumn = (
       ),
       cell: ({ row }) => {
         const value = row.getValue("CurrentStars") as number;
-        return <div className="text-center">{value}</div>;
+        const TotalStars = row.original.TotalStars;
+
+        return (
+          <div className="text-center">
+            {value} / {TotalStars}
+          </div>
+        );
       },
     },
   ];

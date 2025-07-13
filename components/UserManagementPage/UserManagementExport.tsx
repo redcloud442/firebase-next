@@ -17,16 +17,17 @@ import TableLoading from "../ui/table-loading";
 const UserManagementExport = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [nextPageTokens, setNextPageTokens] = useState<string[]>([""]);
   const [exportData, setExportData] = useState<
     {
       id: string;
-      "User Name": string;
-      Email: string;
-      "Time Spent": string;
-      "Correct Answers"?: number;
-      Duration?: string;
-      "Game Car Played"?: number;
-      "Game Motorcycle Played"?: number;
+      email: string;
+      dateCreated: string;
+      "Car Driving Lessons": number;
+      "Car Video Lessons": number;
+      "Motorcycle Driving Lessons": number;
+      "Motorcycle Video Lessons": number;
+      "Road Sign Quiz": number;
     }[]
   >([]);
   const [headers, setHeaders] = useState<{ label: string; key: string }[]>([]);
@@ -42,22 +43,23 @@ const UserManagementExport = () => {
       let totalCount = 0;
       let allData: {
         id: string;
-        "User Name": string;
-        Email: string;
-        "Time Spent": string;
-        "Correct Answers"?: number;
-        Duration?: string;
-        "Game Car Played"?: number;
-        "Game Motorcycle Played"?: number;
+        email: string;
+        dateCreated: string;
+        "Car Driving Lessons": number;
+        "Car Video Lessons": number;
+        "Motorcycle Driving Lessons": number;
+        "Motorcycle Video Lessons": number;
+        "Road Sign Quiz": number;
       }[] = [];
 
       setIsLoading(true);
 
       while (true) {
-        const { data, count } = await getUserRoleManagementExport({
-          page,
-          limit,
-        });
+        const { data, count, nextPageToken } =
+          await getUserRoleManagementExport({
+            nextPageToken: nextPageTokens[page - 1] || undefined,
+            limit,
+          });
 
         if (!data) break;
 
@@ -65,6 +67,10 @@ const UserManagementExport = () => {
         totalCount = count;
 
         allData = [...allData, ...currentBatch];
+
+        if (nextPageToken) {
+          setNextPageTokens([...nextPageTokens, nextPageToken]);
+        }
 
         const totalPages = Math.ceil(totalCount / limit);
         if (page >= totalPages) break;

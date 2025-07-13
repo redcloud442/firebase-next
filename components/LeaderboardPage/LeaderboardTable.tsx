@@ -26,7 +26,7 @@ import LeaderboardTabs from "./LeaderboardTabs";
 
 const AdminLeaderBoardsPage = () => {
   const [leaderboards, setLeaderboards] = useState<
-    { userEmail: string; CurrentStars: number }[]
+    { userEmail: string; CurrentStars: number; TotalStars: number }[]
   >([]);
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
@@ -44,7 +44,7 @@ const AdminLeaderBoardsPage = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const cachedLeaderboards = useRef<{
     [key: string]: {
-      data: { userEmail: string; CurrentStars: number }[];
+      data: { userEmail: string; CurrentStars: number; TotalStars: number }[];
       totalCount: number;
     };
   }>({});

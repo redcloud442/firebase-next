@@ -194,9 +194,9 @@ export const resetProgress = async (params: { uid: string }) => {
 export const getUserRoleManagement = async (params: {
   limit: number;
   search: string;
-  page: number;
+  nextPageToken?: string;
 }) => {
-  const { limit, search, page } = params;
+  const { limit, search, nextPageToken } = params;
 
   const response = await fetch(`/api/user`, {
     method: "POST",
@@ -206,7 +206,7 @@ export const getUserRoleManagement = async (params: {
     body: JSON.stringify({
       limit,
       search,
-      page,
+      nextPageToken,
     }),
   });
 
@@ -221,9 +221,9 @@ export const getUserRoleManagement = async (params: {
 
 export const getUserRoleManagementExport = async (params: {
   limit: number;
-  page: number;
+  nextPageToken?: string;
 }) => {
-  const { limit, page } = params;
+  const { limit, nextPageToken } = params;
 
   const response = await fetch("/api/user/export", {
     method: "POST",
@@ -232,7 +232,7 @@ export const getUserRoleManagementExport = async (params: {
     },
     body: JSON.stringify({
       limit,
-      page,
+      nextPageToken,
     }),
   });
 

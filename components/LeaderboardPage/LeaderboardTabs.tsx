@@ -5,6 +5,7 @@ import ReusableTable from "../ui/reusable-table";
 type LeaderboardData = {
   userEmail: string;
   CurrentStars: number;
+  TotalStars: number;
 };
 
 type Props = {

@@ -6,11 +6,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { KEY_MAPPING } from "@/utils/constant";
 import { userReturnData } from "@/utils/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
+import { formatCustom } from "@/utils/function";
 import Link from "next/link";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
 export const userColumns = (
@@ -19,8 +19,6 @@ export const userColumns = (
   handleResetProgress: (uid: string) => void,
   handleDeleteUser: (uid: string) => void
 ): ColumnDef<userReturnData>[] => {
-  const staticKeys = ["id", "email", "name", "rtime"];
-
   const staticColumns: ColumnDef<userReturnData>[] = [
     {
       accessorKey: "email",
@@ -30,66 +28,122 @@ export const userColumns = (
           <Button
             variant="ghost"
             className="text-blue-500 underline cursor-pointer"
-            onClick={() => handleProceedToUser(row.original.id)}
+            onClick={() => handleProceedToUser(row.original.uid)}
           >
             {row.getValue("email")}
           </Button>
         </div>
       ),
     },
+
     {
-      accessorKey: "name",
-      header: () => <Button variant="ghost">Name</Button>,
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("name")}</div>
-      ),
-    },
-    {
-      accessorKey: "rtime",
+      accessorKey: "dateCreated",
       header: () => <Button variant="ghost">Date Registered</Button>,
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("rtime")}</div>
+        <div className="text-center">
+          {formatCustom(row.getValue("dateCreated"))}
+        </div>
       ),
     },
-  ];
-
-  const dynamicKeys = Array.from(
-    new Set(users.flatMap((user) => Object.keys(user)))
-  ).filter((key) => !staticKeys.includes(key));
-
-  const renderHeader = (key: string) => {
-    const header = KEY_MAPPING[key as keyof typeof KEY_MAPPING] ?? key;
-    return (
-      <Button className="w-full capitalize" variant="ghost">
-        {header}
-      </Button>
-    );
-  };
-
-  const dynamicColumns: ColumnDef<userReturnData>[] = dynamicKeys.map(
-    (key) => ({
-      id: key,
-      accessorKey: key,
-      header: () => renderHeader(key),
+    {
+      accessorKey: "progress.Car Driving Lessons",
+      header: () => <Button variant="ghost">Car Driving Lessons</Button>,
       cell: ({ row }) => {
-        const value = row.getValue(key);
+        const progress = row.original.progress;
+        const carLesson = progress?.["Car Driving Lessons"];
         return (
           <div className="text-center">
-            {typeof value === "object" && value !== null
-              ? JSON.stringify(value)
-              : String(value ?? "—")}
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
           </div>
         );
       },
-    })
-  );
+    },
+    {
+      accessorKey: "progress.Car Video Lessons",
+      header: () => <Button variant="ghost">Car Video Lessons</Button>,
+      cell: ({ row }) => {
+        const progress = row.original.progress;
+        const carLesson = progress?.["Car Video Lessons"];
+        return (
+          <div className="text-center">
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "progress.Motorcycle Driving Lessons",
+      header: () => <Button variant="ghost">Motorcycle Driving Lessons</Button>,
+      cell: ({ row }) => {
+        const progress = row.original.progress;
+        const carLesson = progress?.["Motorcycle Driving Lessons"];
+        return (
+          <div className="text-center">
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "progress.Motorcycle Video Lessons",
+      header: () => <Button variant="ghost">Motorcycle Video Lessons</Button>,
+      cell: ({ row }) => {
+        const progress = row.original.progress;
+        const carLesson = progress?.["Motorcycle Video Lessons"];
+        return (
+          <div className="text-center">
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "progress.Road Sign Quiz",
+      header: () => <Button variant="ghost">Road Sign Quiz</Button>,
+      cell: ({ row }) => {
+        const progress = row.original.progress;
+        const carLesson = progress?.["Road Sign Quiz"];
+        return (
+          <div className="text-center">
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "progress.Theoretical Quiz",
+      header: () => <Button variant="ghost">Theoretical Quiz</Button>,
+      cell: ({ row }) => {
+        const progress = row.original.progress;
+        const carLesson = progress?.["Theoretical Quiz"];
+        return (
+          <div className="text-center">
+            {carLesson
+              ? `${carLesson.CurrentStars} / ${carLesson.TotalStars}`
+              : "N/A"}
+          </div>
+        );
+      },
+    },
+  ];
 
   const actionColumns: ColumnDef<userReturnData>[] = [
     {
       accessorKey: "action",
       header: () => <Button variant="ghost">Action</Button>,
       cell: ({ row }) => {
-        const uuid = row.original.id;
+        const uuid = row.original.uid;
+        const email = row.original.email;
 
         return (
           <DropdownMenu>
@@ -107,7 +161,7 @@ export const userColumns = (
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleResetProgress(uuid)}>
+              <DropdownMenuItem onClick={() => handleResetProgress(email)}>
                 Reset Progress
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDeleteUser(uuid)}>
@@ -120,5 +174,5 @@ export const userColumns = (
     },
   ];
 
-  return [...staticColumns, ...dynamicColumns, ...actionColumns];
+  return [...staticColumns, ...actionColumns];
 };

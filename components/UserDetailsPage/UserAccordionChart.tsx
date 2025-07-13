@@ -1,80 +1,60 @@
-"use client";
+// "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { UserData } from "@/utils/types";
+// import { UserData } from "@/utils/types";
+// import {
+//   Bar,
+//   BarChart,
+//   CartesianGrid,
+//   Legend,
+//   ResponsiveContainer,
+//   Tooltip,
+//   XAxis,
+//   YAxis,
+// } from "recharts";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "../ui/card";
 
-const formatTime = (timeStr: string) => {
-  return new Date(timeStr).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-};
+// type UserPerformanceChartProps = {
+//   user: UserData;
+// };
 
-export function UserPerformanceCharts({ user }: { user: UserData }) {
-  return (
-    <div className="grid grid-cols-1 gap-6">
-      <Card className="flex flex-col">
-        <CardHeader>
-          <CardTitle>Gameplay Activity Status</CardTitle>
-          <CardDescription>
-            Each activity is listed under its category with status
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="multiple">
-            {Object.entries(user.Game_Info || {}).map(([category, games]) => (
-              <AccordionItem key={category} value={category}>
-                <AccordionTrigger className="text-lg font-medium">
-                  {category}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-4">
-                    {Object.entries(games || {}).map(([game, details]) => (
-                      <li
-                        key={game}
-                        className="border p-2 rounded-md flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="font-medium text-lg">
-                            {game.replaceAll("_", " ")}
-                          </p>
-                          <p className="text-muted-foreground text-md">
-                            Duration: {details.duration || ""} | Start:{" "}
-                            {formatTime(details.start_time || "")} | End:{" "}
-                            {formatTime(details.end_time || "")}
-                          </p>
-                        </div>
-                        <Badge
-                          variant={`${details.status === "completed" ? "success" : "warning"}`}
-                          className="text-white font-medium uppercase"
-                        >
-                          {details.status || ""}
-                        </Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+// export const UserPerformanceChart = ({ user }: UserPerformanceChartProps) => {
+//   const progress = user.progress?.ProgressDict ?? {};
 
-export default UserPerformanceCharts;
+//   const data = Object.entries(progress).map(
+//     ([lessonName, value]: [string, { CurrentStars: number; TotalStars: number }]) => ({
+//       lesson: lessonName,
+//       current: value?.CurrentStars ?? 0,
+//       total: value?.TotalStars ?? 0,
+//     }))
+//   );
+
+//   return (
+//     <Card>
+//       <CardHeader>
+//         <CardTitle>Player Progress Overview</CardTitle>
+//         <CardDescription>
+//           Shows the star progress in each lesson or quiz
+//         </CardDescription>
+//       </CardHeader>
+//       <CardContent className="h-[300px]">
+//         <ResponsiveContainer width="100%" height="100%">
+//           <BarChart data={data}>
+//             <CartesianGrid strokeDasharray="3 3" />
+//             <XAxis dataKey="lesson" tick={{ fontSize: 12 }} />
+//             <YAxis allowDecimals={false} />
+//             <Tooltip />
+//             <Legend />
+//             <Bar dataKey="current" fill="#3b82f6" name="Current Stars" />
+//             <Bar dataKey="total" fill="#d1d5db" name="Total Stars" />
+//           </BarChart>
+//         </ResponsiveContainer>
+//       </CardContent>
+//     </Card>
+//   );
+// };

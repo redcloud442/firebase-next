@@ -77,7 +77,7 @@ export const DELETE = async (
 
   const { userUid } = await params;
 
-  await resetProgress(userUid, email!, uid!);
+  await resetProgress(email!, uid!, userUid);
 
   return NextResponse.json({ message: "Progress reset" });
 };

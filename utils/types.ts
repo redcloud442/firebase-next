@@ -49,6 +49,11 @@ export type GameInfo = {
 
 export type UserData = {
   User_Information: UserInfo;
+  progress: ProgressData;
+};
+
+export type DashboardInfo = {
+  User_Information: UserInfo;
   Quiz_Info?: {
     [category: string]: QuizInfo;
   };
@@ -60,19 +65,18 @@ export type UserData = {
 };
 
 export type userReturnData = {
-  id: string;
-  name: string;
+  uid: string;
   email: string;
-  rtime: string;
-  correctAnswers?: number;
-  wrongAnswers?: number;
-  totalQuestions?: number;
-  duration?: string;
-  score?: number;
-  startTime?: string;
-  endTime?: string;
-  gameCarInfo?: number;
-  gameMotorcycleInfo?: number;
+  dateCreated: string;
+  progress: ProgressData;
+};
+
+export type ProgressData = {
+  [category: string]: {
+    CurrentStars: number;
+    ProgressName: string;
+    TotalStars: number;
+  };
 };
 
 export type DashboardData = {

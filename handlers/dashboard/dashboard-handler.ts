@@ -1,12 +1,12 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
 import { parseDuration } from "@/utils/function";
-import { QuizInfo, UserData } from "@/utils/types";
+import { DashboardInfo, QuizInfo } from "@/utils/types";
 
 export const getDashboardData = async () => {
   const userRef = firebaseAdmin.database().ref("users");
   const snapshot = await userRef.once("value");
 
-  const users: Record<string, UserData> = snapshot.val() || {};
+  const users: Record<string, DashboardInfo> = snapshot.val() || {};
 
   let totalUsers = 0;
   let activePlayers = 0;

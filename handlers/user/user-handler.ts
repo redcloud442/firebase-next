@@ -1,4 +1,5 @@
 import firebaseAdmin from "@/utils/firebase/firebaseAdmin";
+import { formatCustom } from "@/utils/function";
 import { UserData } from "@/utils/types";
 import { Timestamp } from "firebase/firestore";
 
@@ -34,154 +35,93 @@ export const getAdminUsers = async (params: {
 export const getUsers = async (params: {
   limit: number;
   search?: string;
-  startAfterKey?: string;
+  nextPageToken?: string;
 }) => {
-  const { limit, search, startAfterKey } = params;
+  const { limit, nextPageToken, search } = params;
 
-  const userRef = firebaseAdmin.database().ref("users");
-  let query = userRef.orderByKey();
+  const result = search
+    ? [await firebaseAdmin.auth().getUserByEmail(search)]
+    : await firebaseAdmin.auth().listUsers(limit, nextPageToken ?? undefined);
 
-  if (startAfterKey) {
-    query = query.startAfter(startAfterKey);
-  }
+  const allUsers = Array.isArray(result) ? result : result.users;
 
-  query = query.limitToFirst(limit);
+  const firestore = firebaseAdmin.firestore();
 
-  const snapshot = await query.once("value");
+  const usersWithProgress = await Promise.all(
+    allUsers.map(async (user: firebaseAdmin.auth.UserRecord) => {
+      const progressDoc = await firestore
+        .collection("progress")
+        .doc(user.email ?? "")
+        .get();
 
-  const users: {
-    id: string;
-    name: string;
-    email: string;
-    rtime: string;
-    correctAnswers?: number;
-    duration?: string;
-    gameCarInfo?: number;
-    gameMotorcycleInfo?: number;
-  }[] = [];
+      const progressData = progressDoc.exists
+        ? (progressDoc.data()?.ProgressDict ?? {})
+        : null;
 
-  let filteredCount = 0;
+      return {
+        uid: user.uid,
+        email: user.email,
+        dateCreated: user.metadata.creationTime,
+        progress: progressData,
+      };
+    })
+  );
 
-  snapshot.forEach((child) => {
-    const uid = child.key!;
-    const user = child.val() as UserData;
-
-    const name = user.User_Information?.name || "";
-    const email = user.User_Information?.email || "";
-    const rtime = user.User_Information?.rtime || "";
-
-    const matchesSearch =
-      !search ||
-      name.toLowerCase().includes(search.toLowerCase()) ||
-      email.toLowerCase().includes(search.toLowerCase());
-
-    if (matchesSearch) {
-      filteredCount++;
-
-      // --- AGGREGATE Quiz_Info ---
-      let totalCorrect = 0;
-      let duration = "00:00:00"; // Default
-
-      if (user.Quiz_Info) {
-        for (const quiz of Object.values(user.Quiz_Info)) {
-          totalCorrect += quiz.correct_answers ?? 0;
-          // Note: Combining durations as strings isn't meaningful unless you convert to seconds.
-          // For now, we'll just grab the first duration found.
-          if (duration === "00:00:00" && quiz.duration) {
-            duration = quiz.duration;
-          }
-        }
-      }
-
-      // --- Count Game Info ---
-      const gameCarInfo = Object.keys(user.Game_Info?.Cars ?? {}).length;
-      const gameMotorcycleInfo = Object.keys(
-        user.Game_Info?.Motorcycle ?? {}
-      ).length;
-
-      users.push({
-        id: uid,
-        name,
-        email,
-        rtime,
-        correctAnswers: totalCorrect,
-        duration,
-        gameCarInfo,
-        gameMotorcycleInfo,
-      });
-    }
-  });
+  const count = (await firebaseAdmin.auth().listUsers()).users.length;
 
   return {
-    data: users,
-    count: filteredCount,
+    users: usersWithProgress,
+    nextPageToken: Array.isArray(result) ? null : (result.pageToken ?? null),
+    count,
   };
 };
 
 export const getUsersExport = async (params: {
   limit: number;
-  startAfterKey?: string;
+  nextPageToken?: string;
 }) => {
-  const { limit, startAfterKey } = params;
+  const { limit, nextPageToken } = params;
 
-  const userRef = firebaseAdmin.database().ref("users");
-  let query = userRef.orderByKey();
+  const result = await firebaseAdmin
+    .auth()
+    .listUsers(limit, nextPageToken ?? undefined);
 
-  if (startAfterKey) {
-    query = query.startAfter(startAfterKey);
-  }
+  const allUsers = Array.isArray(result) ? result : result.users;
 
-  query = query.limitToFirst(limit);
+  const firestore = firebaseAdmin.firestore();
 
-  const snapshot = await query.once("value");
+  const usersWithProgress = await Promise.all(
+    allUsers.map(async (user: firebaseAdmin.auth.UserRecord) => {
+      const progressDoc = await firestore
+        .collection("progress")
+        .doc(user.email ?? "")
+        .get();
 
-  const users: {
-    id: string;
-    "User Name": string;
-    Email: string;
-    "Time Spent": string;
-    "Correct Answers"?: number;
-    Duration?: string;
-    "Game Car Played"?: number;
-    "Game Motorcycle Played"?: number;
-  }[] = [];
+      const progressData = progressDoc.exists
+        ? (progressDoc.data()?.ProgressDict ?? {})
+        : null;
 
-  snapshot.forEach((child) => {
-    const uid = child.key!;
-    const user = child.val() as UserData;
-
-    const name = user.User_Information?.name || "";
-    const email = user.User_Information?.email || "";
-
-    users.push({
-      id: uid,
-      "User Name": name,
-      Email: email,
-      "Time Spent": Object.values(user.Quiz_Info || {}).reduce(
-        (acc, quiz) => acc + (quiz.duration ?? "00:00:00"),
-        "00:00:00"
-      ),
-      ...(user.Quiz_Info && {
-        "Correct Answers": Object.values(user.Quiz_Info).reduce(
-          (acc, quiz) => acc + (quiz.correct_answers ?? 0),
-          0
-        ),
-        Duration: Object.values(user.Quiz_Info).reduce(
-          (acc, quiz) => acc + (quiz.duration ?? "00:00:00"),
-          "00:00:00"
-        ),
-      }),
-      ...(user.Game_Info && {
-        "Game Car Played": Object.keys(user.Game_Info.Cars ?? {}).length ?? 0,
-        "Game Motorcycle Played":
-          Object.keys(user.Game_Info.Motorcycle ?? {}).length ?? 0,
-      }),
-    });
-  });
+      return {
+        uid: user.uid,
+        email: user.email,
+        dateCreated: formatCustom(user.metadata.creationTime),
+        "Car Driving Lessons":
+          progressData?.["Car Driving Lessons"].CurrentStars ?? 0,
+        "Car Video Lessons":
+          progressData?.["Car Video Lessons"].CurrentStars ?? 0,
+        "Motorcycle Driving Lessons":
+          progressData?.["Motorcycle Driving Lessons"].CurrentStars ?? 0,
+        "Motorcycle Video Lessons":
+          progressData?.["Motorcycle Video Lessons"].CurrentStars ?? 0,
+        "Road Sign Quiz": progressData?.["Road Sign Quiz"].CurrentStars ?? 0,
+      };
+    })
+  );
 
   return {
-    data: users,
-    count: snapshot.numChildren(),
+    data: usersWithProgress,
+    count: result.users.length,
+    nextPageToken: Array.isArray(result) ? null : (result.pageToken ?? null),
   };
 };
 
@@ -326,17 +266,10 @@ export const updateUserChangePassword = async (params: {
 };
 
 export const resetProgress = async (
-  uid: string,
   email: string,
-  actorUid: string
+  actorUid: string,
+  userEmail: string
 ) => {
-  const userRef = firebaseAdmin.database().ref(`users/${uid}`);
-
-  const snapshot = await userRef.once("value");
-  const userData = snapshot.val();
-
-  if (!userData) return;
-
   await firebaseAdmin
     .firestore()
     .collection("user-history")
@@ -345,14 +278,42 @@ export const resetProgress = async (
     .add({
       type: "reset-progress",
       date: new Date(),
-      actionReceivedBy: userData?.User_Information?.email ?? "",
+      actionReceivedBy: userEmail,
       actionBy: email,
     });
 
-  await userRef.update({
-    Quiz_Info: null,
-    Game_Info: null,
-  });
+  await firebaseAdmin
+    .firestore()
+    .collection("progress")
+    .doc(userEmail)
+    .update({
+      ProgressDict: {
+        "Car Driving Lessons": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+        "Car Video Lessons": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+        "Motorcycle Driving Lessons": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+        "Motorcycle Video Lessons": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+        "Road Sign Quiz": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+        "Theoretical Quiz": {
+          CurrentStars: 0,
+          TotalStars: 0,
+        },
+      },
+    });
 };
 
 export const deleteUser = async (
@@ -401,9 +362,22 @@ export const deleteUser = async (
 };
 
 export const getUser = async (uid: string) => {
-  const userRef = firebaseAdmin.database().ref(`users/${uid}`);
+  const user = await firebaseAdmin.auth().getUser(uid);
 
-  const snapshot = await userRef.once("value");
+  const progressDoc = await firebaseAdmin
+    .firestore()
+    .collection("progress")
+    .doc(user.email ?? "")
+    .get();
 
-  return { data: snapshot.val() as UserData };
+  return {
+    data: {
+      User_Information: {
+        email: user.email ?? "",
+        name: user.displayName ?? "",
+        rtime: user.metadata.creationTime,
+      },
+      progress: progressDoc.data()?.ProgressDict ?? {},
+    } as UserData,
+  };
 };

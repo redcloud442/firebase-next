@@ -9,11 +9,11 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { limit, page } = await req.json();
+  const { limit, nextPageToken } = await req.json();
 
   const user = await getUsersExport({
     limit,
-    startAfterKey: String(page),
+    nextPageToken,
   });
 
   return NextResponse.json(user);
