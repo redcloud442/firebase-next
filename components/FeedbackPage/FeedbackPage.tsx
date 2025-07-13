@@ -111,7 +111,9 @@ const FeedbackPage = () => {
 
       toast.success("Feedback deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete feedback");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     } finally {
       setIsDeleting(false);
     }
