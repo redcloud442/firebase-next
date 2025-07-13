@@ -43,7 +43,7 @@ const data = {
           url: "/quiz",
         },
         {
-          title: "feedback",
+          title: "Feedback",
           url: "/feedback",
         },
       ],
