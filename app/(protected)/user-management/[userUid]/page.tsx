@@ -11,13 +11,7 @@ const page = async ({ params }: { params: Promise<{ userUid: string }> }) => {
 
   return (
     <UserDetailsPage
-      user={
-        data ||
-        ({
-          User_Information: { email: "", name: "", rtime: "" },
-          progress: {},
-        } as UserData)
-      }
+      user={data || { User_Information: { email: "", name: "", rtime: "" }, progress: {} } as UserData}
     />
   );
 };

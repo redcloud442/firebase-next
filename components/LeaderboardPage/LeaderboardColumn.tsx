@@ -62,7 +62,7 @@ export const leaderBoardColumn = (
       accessorKey: "CurrentStars",
       header: () => (
         <Button className="w-full " variant="ghost">
-          {leaderBoardType.includes("Quiz") ? "Quiz Score" : "Stars Count"}
+          {leaderBoardType.includes("Quiz") ? "Quiz Progress" : "Stars Count"}
         </Button>
       ),
       cell: ({ row }) => {
