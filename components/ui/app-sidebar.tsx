@@ -43,6 +43,10 @@ const data = {
           url: "/quiz",
         },
         {
+          title: "Video",
+          url: "/video",
+        },
+        {
           title: "Feedback",
           url: "/feedback",
         },

@@ -101,8 +101,6 @@ const FeedbackPage = () => {
 
   const handleDelete = async (id: string, email: string) => {
     try {
-      console.log(id, email);
-
       setIsDeleting(true);
       const db = getFirestore();
       await deleteDoc(doc(db, "feedback", email, "comments_feedback", id));

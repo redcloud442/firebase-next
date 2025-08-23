@@ -55,12 +55,12 @@ const FrontPage = () => {
     {
       name: "Most Completed Stage",
       stage: data.mostCompletedStage,
-      value: 1,
+      value: data.mostCompletedStageStars,
     },
     {
       name: "Least Completed Stage",
       stage: data.leastCompletedStage,
-      value: 1,
+      value: data.leastCompletedStageStars,
     },
   ];
 
@@ -90,10 +90,6 @@ const FrontPage = () => {
           value={
             data?.averageQuizScore ? data.averageQuizScore.toFixed(2) : "0.00"
           }
-        />
-        <DashboardCard
-          title="Avg. Time Spent"
-          value={`${data?.averageTimeSpent ? (data.averageTimeSpent / 60).toFixed(2) : "0.00"} mins`}
         />
       </div>
 

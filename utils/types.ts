@@ -88,6 +88,8 @@ export type DashboardData = {
   mostCompletedStage: string;
   leastCompletedStage: string;
   averageTimeSpent: number;
+  mostCompletedStageStars: number;
+  leastCompletedStageStars: number;
 };
 
 export type Quiz = {
@@ -111,4 +113,19 @@ export type CreateQuiz = {
   correct_answer: number;
   quizLanguage: string;
   quiz_type: string;
+};
+
+export type CreateVideo = {
+  name: string;
+  lesson_type: string;
+  video_url: string;
+  lessonLanguage: string;
+};
+
+export type Video = {
+  id: string;
+  name: string;
+  lesson_type: string;
+  video_url: string;
+  createdAt: string;
 };
