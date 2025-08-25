@@ -114,10 +114,10 @@ export type DashboardData = {
 };
 
 export type ScoreBuckets = {
-  "0-5": number;
-  "6-10": number;
-  "11-15": number;
-  "16-20": number;
+  "0-10": number;
+  "11-20": number;
+  "21-30": number;
+  "31-40": number;
 };
 
 export type TopPerformer = {

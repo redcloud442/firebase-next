@@ -91,10 +91,10 @@ const FrontPage = () => {
   ];
 
   const scoreBucketData = [
-    { name: "0-5", value: data.scoreBuckets["0-5"] },
-    { name: "6-10", value: data.scoreBuckets["6-10"] },
-    { name: "11-15", value: data.scoreBuckets["11-15"] },
-    { name: "16-above", value: data.scoreBuckets["16-20"] },
+    { name: "0-5", value: data.scoreBuckets["0-10"] },
+    { name: "6-10", value: data.scoreBuckets["11-20"] },
+    { name: "11-15", value: data.scoreBuckets["21-30"] },
+    { name: "16-above", value: data.scoreBuckets["31-40"] },
   ];
 
   const pieColors = ["#F59E0B", "#3B82F6", "#8B5CF6", "#10B981"];
