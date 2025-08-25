@@ -80,17 +80,55 @@ export type ProgressData = {
 };
 
 export type DashboardData = {
+  // headline
   totalUsers: number;
   activePlayers: number;
+  engagementRate: number; // %
   totalQuizAttempts: number;
-  successRate: number;
-  averageQuizScore: number;
+
+  // scoring
+  averageQuizScore: number; // raw average out of maxScorePerQuiz
+  avgScore: number; // alias for convenience
+  successRate: number; // %
+  scoreBuckets: ScoreBuckets;
+  topPerformers: TopPerformer[];
+
+  // time
+  avgSecondsConsumed: number; // seconds
+  avgTimeSpent: number; // seconds (alias of avgSecondsConsumed)
+  medianSecondsConsumed: number; // seconds
+  avgSecondsRemaining: number; // seconds
+  avgTimePerQuestion: number; // seconds
+  avgSecondsPerCorrectAnswer: number; // seconds
+  fastExitRate: number; // %
+
+  // trends (last 7 days)
+  attemptsByDay: AttemptsByDay[];
+  avgScoreByDay: AvgScoreByDay[];
+
+  // stages
   mostCompletedStage: string;
-  leastCompletedStage: string;
-  averageTimeSpent: number;
   mostCompletedStageStars: number;
+  leastCompletedStage: string;
   leastCompletedStageStars: number;
 };
+
+export type ScoreBuckets = {
+  "0-5": number;
+  "6-10": number;
+  "11-15": number;
+  "16-20": number;
+};
+
+export type TopPerformer = {
+  name: string;
+  email: string;
+  score: number;
+  secondsConsumed: number;
+};
+
+export type AttemptsByDay = { date: string; attempts: number };
+export type AvgScoreByDay = { date: string; avgScore: number };
 
 export type Quiz = {
   id: string;
