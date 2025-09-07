@@ -265,7 +265,7 @@ export const updateUserChangePassword = async (params: {
     });
 };
 
-export const resetProgress = async (
+export const  resetProgress = async (
   email: string,
   actorUid: string,
   userEmail: string

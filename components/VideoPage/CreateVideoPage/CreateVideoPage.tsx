@@ -72,6 +72,7 @@ export default function CreateQuizPage() {
           name: video.name,
           video_url: video.video_url,
           createdAt: serverTimestamp(),
+          lesson_type: video.lesson_type,
           lessonLanguage: video.lessonLanguage,
           id: videoRef.id,
           is_deleted: false,
