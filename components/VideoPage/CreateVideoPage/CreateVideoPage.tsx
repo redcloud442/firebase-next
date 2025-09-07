@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CreateVideo } from "@/utils/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   collection,
@@ -17,6 +16,13 @@ import { toast } from "sonner";
 import { z } from "zod";
 import VideoItem from "./VideoItem";
 
+export type CreateVideo = {
+  name: string;
+  video_url: string;
+  lesson_type: "car" | "motorcycle";
+  lessonLanguage: "english" | "tagalog";
+};
+
 type FormValues = {
   video: CreateVideo[];
 };
@@ -24,10 +30,10 @@ type FormValues = {
 const zodSchema = z.object({
   video: z.array(
     z.object({
-      name: z.string().trim(),
-      video_url: z.string().trim(),
-      lesson_type: z.string().trim(),
-      lessonLanguage: z.string().trim(),
+      name: z.string().trim().min(1, "Name is required"),
+      video_url: z.string().trim().url("Please upload a valid video"),
+      lesson_type: z.enum(["car", "motorcycle"]),
+      lessonLanguage: z.enum(["english", "tagalog"]),
     })
   ),
 });
@@ -40,21 +46,22 @@ export default function CreateQuizPage() {
       video: [
         {
           name: "",
-          lesson_type: "car",
           video_url: "",
-          lessonLanguage: "motorcycle",
+          lesson_type: "car",
+          lessonLanguage: "english",
         },
       ],
     },
     resolver: zodResolver(zodSchema),
+    mode: "onSubmit",
   });
 
   const { control, handleSubmit, reset } = form;
 
   const {
     fields: videoFields,
-    append: appendQuiz,
-    remove: removeQuiz,
+    append: appendVideo,
+    remove: removeVideo,
   } = useFieldArray({
     control,
     name: "video",
@@ -69,22 +76,26 @@ export default function CreateQuizPage() {
         const videoRef = doc(collection(db, "video"));
         batch.set(videoRef, {
           ...video,
-          name: video.name,
-          video_url: video.video_url,
           createdAt: serverTimestamp(),
-          lesson_type: video.lesson_type,
-          lessonLanguage: video.lessonLanguage,
           id: videoRef.id,
           is_deleted: false,
         });
       });
 
-      reset();
-
       await batch.commit();
-      toast.success("Video Lesson created successfully");
+      toast.success("Video Lesson(s) created successfully");
+      reset({
+        video: [
+          {
+            name: "",
+            video_url: "",
+            lesson_type: "car",
+            lessonLanguage: "english",
+          },
+        ],
+      });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to create quiz");
+      toast.error(e instanceof Error ? e.message : "Failed to create videos");
     }
   };
 
@@ -96,7 +107,7 @@ export default function CreateQuizPage() {
             key={field.id}
             index={index}
             setIsLoading={setIsLoading}
-            remove={() => removeQuiz(index)}
+            remove={() => removeVideo(index)}
           />
         ))}
 
@@ -105,15 +116,15 @@ export default function CreateQuizPage() {
             type="button"
             variant="outline"
             onClick={() =>
-              appendQuiz({
+              appendVideo({
                 name: "",
                 video_url: "",
-                lesson_type: "car",
-                lessonLanguage: "motorcycle",
+                lesson_type: "car", // keep consistent
+                lessonLanguage: "english", // keep consistent
               })
             }
           >
-            <PlusIcon /> Add Video
+            <PlusIcon className="mr-2 h-4 w-4" /> Add Video
           </Button>
         </div>
 
